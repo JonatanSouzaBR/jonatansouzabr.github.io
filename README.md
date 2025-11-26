@@ -29,7 +29,42 @@ npm start
 
 # Build para produção
 npm run build
+
+# Build para GitHub Pages
+npm run build:github
 ```
+
+## 🚀 Deploy no GitHub Pages
+
+O projeto está configurado para deploy automático no GitHub Pages através do GitHub Actions.
+
+### Configuração Automática (Recomendado)
+
+1. **Habilite o GitHub Pages no repositório:**
+   - Vá em Settings → Pages
+   - Em "Source", selecione "GitHub Actions"
+
+2. **Faça push para a branch `main` ou `master`:**
+   - O workflow será executado automaticamente
+   - O site estará disponível em `https://jonatansouzabr.github.io`
+
+### Deploy Manual
+
+Se preferir fazer deploy manual:
+
+```bash
+# 1. Fazer build para GitHub Pages
+npm run build:github
+
+# 2. Copiar conteúdo de dist/mentormatch para a branch gh-pages
+# (ou usar a interface do GitHub para fazer upload)
+```
+
+### Notas Importantes
+
+- O `baseHref` está configurado como `/` para repositórios `username.github.io`
+- Se o repositório tiver um nome diferente, ajuste o `baseHref` no `angular.json`
+- O arquivo `.nojekyll` garante que o GitHub Pages não processe os arquivos com Jekyll
 
 ## 🎯 Funcionalidades
 
