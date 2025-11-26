@@ -81,7 +81,8 @@ npm run deploy
 
 Este comando irá:
 1. Gerar o build de produção com o `base-href` correto (`/`)
-2. Publicar automaticamente na branch `gh-pages`
+2. Criar automaticamente os arquivos `.nojekyll` e `404.html` (necessários para GitHub Pages)
+3. Publicar automaticamente na branch `gh-pages`
 
 ### Deploy Manual (Passo a Passo)
 
@@ -98,6 +99,23 @@ npx angular-cli-ghpages --dir=dist/mentormatch --nojekyll
 ```
 
 ### Solução de Problemas
+
+#### Erro 404 - File not found
+
+Se você receber um erro 404 ao acessar o site, verifique:
+
+1. **Arquivo `404.html` criado:**
+   - O arquivo `404.html` é criado automaticamente após cada build
+   - Ele é uma cópia do `index.html` e permite que o Angular Router funcione corretamente no GitHub Pages
+   - Verifique se existe: `ls -la dist/mentormatch/404.html`
+
+2. **Arquivos do build presentes:**
+   - Certifique-se de que o build foi executado: `npm run build:prod`
+   - Verifique se os arquivos estão em `dist/mentormatch/`
+
+3. **Configuração do GitHub Pages:**
+   - Verifique se está apontando para a branch/folder corretos
+   - Aguarde alguns minutos após o deploy para o GitHub Pages atualizar
 
 #### Erro do Jekyll
 
@@ -129,6 +147,7 @@ Se você receber erros relacionados ao Jekyll (como "Jekyll::Converters::Scss en
   ```
 - O `angular-cli-ghpages` cria automaticamente a branch `gh-pages` se ela não existir
 - O arquivo `.nojekyll` é criado automaticamente após cada build para desabilitar o processamento do Jekyll no GitHub Pages (evita erros com arquivos que começam com `_`)
+- O arquivo `404.html` é criado automaticamente após cada build (cópia do `index.html`) para permitir que o Angular Router funcione corretamente no GitHub Pages
 - Após o deploy, aguarde alguns minutos para o GitHub Pages atualizar o site
 
 ## 🎯 Funcionalidades

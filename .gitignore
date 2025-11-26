@@ -1,0 +1,65 @@
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+.angular/
+*.tsbuildinfo
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Arquivos duplicados (parece que há alguns arquivos com " 2" no nome)
+* 2.*
+* 2
+
+# GitHub Pages (se estiver usando pasta docs, descomente a linha abaixo)
+# docs/
+
+# Arquivos de teste
+coverage/
+.nyc_output/
+
+# Arquivos de configuração local
+*.local
