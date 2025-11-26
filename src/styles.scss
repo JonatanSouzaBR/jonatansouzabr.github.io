@@ -1,0 +1,226 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Tipografia MasterClass - Fontes exatas do site oficial
+// Fontes: Sohne, Helvetica, Arial, sans-serif (na sequência exata)
+
+body {
+  background-color: #000000;
+  color: #FFFFFF;
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: always;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-size: 16px; // Base: 16px (Masterclass padrão)
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+// ============================================
+// VARIAÇÕES DE TÍTULOS (MasterClass Style)
+// Tamanhos baseados no padrão Masterclass.com
+// ============================================
+
+// Hero Title - Título principal grande (32-36px base, maior em hero)
+h1 {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 2.25rem); // 32px - 36px (Masterclass padrão)
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  text-transform: none; // Masterclass não usa uppercase em todos os títulos
+}
+
+// Section Titles - Títulos de seção (24-28px)
+h2 {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3vw, 1.75rem); // 24px - 28px (Masterclass padrão)
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: none;
+}
+
+// Card Titles / Subsection Titles (18-22px)
+h3 {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.125rem, 2vw, 1.375rem); // 18px - 22px (Masterclass padrão)
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  text-transform: none;
+}
+
+// Small Headings (16-18px)
+h4, h5, h6 {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 1.5vw, 1.125rem); // 16px - 18px (Masterclass padrão)
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+// ============================================
+// CLASSES UTILITÁRIAS MASTERCLASS
+// ============================================
+
+// Display Font - Para títulos hero muito grandes
+.display-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+// Heading Font - Para títulos de seção
+.heading-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+// Card Title Font - Para títulos de cards
+.card-title-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+}
+
+// Body Font - Para texto corrido (16px - padrão Masterclass)
+.body-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 1rem; // 16px
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+// Navigation Font - Para navegação (14px - padrão Masterclass)
+.nav-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem; // 14px
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+// Button Font - Para botões (16px - padrão Masterclass)
+.button-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 600;
+  font-size: 1rem; // 16px
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+// Small Text Font - Para textos pequenos (14px - padrão Masterclass)
+.small-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem; // 14px
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+// Extra Small Text - Para badges, labels (12px - padrão Masterclass)
+.text-xs {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem; // 12px
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+// Mentor Name Font - Para nomes de mentores (16px - padrão Masterclass)
+.mentor-name-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 1rem; // 16px
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+// Price Font - Para preços (24px - padrão Masterclass)
+.price-font {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem; // 24px
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.2;
+}
+
+// Paragraph - Texto de parágrafo (16px - padrão Masterclass)
+p {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 1rem; // 16px
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+// Small paragraph (14px - padrão Masterclass)
+p.small, small {
+  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem; // 14px
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+// Otimização de imagens
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: high-quality;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+// Lazy loading para imagens - removido para garantir que imagens apareçam
+img {
+  opacity: 1 !important;
+}
