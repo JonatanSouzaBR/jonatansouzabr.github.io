@@ -38,12 +38,34 @@ npm run build:github
 
 ### Configuração no GitHub
 
+**IMPORTANTE:** Escolha uma das duas opções abaixo:
+
+#### Opção 1: Usar Branch `gh-pages` (Recomendado)
+
 1. **Configure o GitHub Pages:**
    - Vá em Settings → Pages no seu repositório
    - Em "Source", selecione:
      - **Branch**: `gh-pages`
      - **Folder**: `/ (root)`
    - Se a branch `gh-pages` não existir, ela será criada automaticamente no próximo passo
+
+#### Opção 2: Usar Pasta `docs` na Branch Principal
+
+Se você preferir usar a pasta `docs` na sua branch principal (main/master):
+
+1. **Configure o GitHub Pages:**
+   - Vá em Settings → Pages no seu repositório
+   - Em "Source", selecione:
+     - **Branch**: `main` (ou `master`)
+     - **Folder**: `/docs`
+   
+2. **Use o script de deploy para pasta docs:**
+   ```bash
+   npm run deploy:docs
+   git add docs
+   git commit -m "Deploy para GitHub Pages"
+   git push
+   ```
 
 ### Deploy Automatizado (Recomendado)
 
@@ -75,6 +97,29 @@ ng build --configuration production --base-href "/"
 npx angular-cli-ghpages --dir=dist/mentormatch --nojekyll
 ```
 
+### Solução de Problemas
+
+#### Erro do Jekyll
+
+Se você receber erros relacionados ao Jekyll (como "Jekyll::Converters::Scss encountered an error"), isso significa que o GitHub Pages está tentando processar seus arquivos com Jekyll. A solução é garantir que o arquivo `.nojekyll` esteja presente:
+
+1. **Se estiver usando a branch `gh-pages`:**
+   - O arquivo `.nojekyll` é criado automaticamente pelo script `deploy`
+   - Verifique se o script está sendo executado corretamente
+
+2. **Se estiver usando a pasta `docs`:**
+   - Use o script `deploy:docs` que cria o arquivo automaticamente
+   - Ou crie manualmente: `touch docs/.nojekyll` e faça commit
+
+3. **Verificar se o arquivo existe:**
+   ```bash
+   # Para branch gh-pages
+   ls -la dist/mentormatch/.nojekyll
+   
+   # Para pasta docs
+   ls -la docs/.nojekyll
+   ```
+
 ### Notas Importantes
 
 - O `baseHref` está configurado como `/` para repositórios `username.github.io`
@@ -83,7 +128,7 @@ npx angular-cli-ghpages --dir=dist/mentormatch --nojekyll
   ng build --configuration production --base-href "/nome-do-repositorio/"
   ```
 - O `angular-cli-ghpages` cria automaticamente a branch `gh-pages` se ela não existir
-- O arquivo `.nojekyll` é criado automaticamente para desabilitar o processamento do Jekyll no GitHub Pages (evita erros com arquivos que começam com `_`)
+- O arquivo `.nojekyll` é criado automaticamente após cada build para desabilitar o processamento do Jekyll no GitHub Pages (evita erros com arquivos que começam com `_`)
 - Após o deploy, aguarde alguns minutos para o GitHub Pages atualizar o site
 
 ## 🎯 Funcionalidades

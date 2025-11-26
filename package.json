@@ -7,7 +7,9 @@
     "build": "ng build",
     "build:github": "ng build --configuration=github-pages",
     "build:prod": "ng build --configuration production --base-href /",
+    "postbuild:prod": "node scripts/create-nojekyll.js",
     "deploy": "npm run build:prod && npx angular-cli-ghpages --dir=dist/mentormatch --nojekyll",
+    "deploy:docs": "npm run build:prod && rm -rf docs && cp -r dist/mentormatch docs && node scripts/create-nojekyll.js docs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
