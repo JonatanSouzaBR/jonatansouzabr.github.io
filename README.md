@@ -36,35 +36,55 @@ npm run build:github
 
 ## 🚀 Deploy no GitHub Pages
 
-O projeto está configurado para deploy automático no GitHub Pages através do GitHub Actions.
+### Configuração no GitHub
 
-### Configuração Automática (Recomendado)
+1. **Configure o GitHub Pages:**
+   - Vá em Settings → Pages no seu repositório
+   - Em "Source", selecione:
+     - **Branch**: `gh-pages`
+     - **Folder**: `/ (root)`
+   - Se a branch `gh-pages` não existir, ela será criada automaticamente no próximo passo
 
-1. **Habilite o GitHub Pages no repositório:**
-   - Vá em Settings → Pages
-   - Em "Source", selecione "GitHub Actions"
+### Deploy Automatizado (Recomendado)
 
-2. **Faça push para a branch `main` ou `master`:**
-   - O workflow será executado automaticamente
-   - O site estará disponível em `https://jonatansouzabr.github.io`
-
-### Deploy Manual
-
-Se preferir fazer deploy manual:
+O projeto inclui um script que faz tudo automaticamente:
 
 ```bash
-# 1. Fazer build para GitHub Pages
-npm run build:github
+# Instalar dependências (se ainda não instalou)
+npm install
 
-# 2. Copiar conteúdo de dist/mentormatch para a branch gh-pages
-# (ou usar a interface do GitHub para fazer upload)
+# Fazer build e deploy em um único comando
+npm run deploy
+```
+
+Este comando irá:
+1. Gerar o build de produção com o `base-href` correto (`/`)
+2. Publicar automaticamente na branch `gh-pages`
+
+### Deploy Manual (Passo a Passo)
+
+Se preferir fazer manualmente:
+
+```bash
+# 1. Gerar o build Angular com o base-href correto
+npm run build:prod
+# ou
+ng build --configuration production --base-href "/"
+
+# 2. Publicar o build na branch gh-pages (com suporte para desabilitar Jekyll)
+npx angular-cli-ghpages --dir=dist/mentormatch --nojekyll
 ```
 
 ### Notas Importantes
 
 - O `baseHref` está configurado como `/` para repositórios `username.github.io`
-- Se o repositório tiver um nome diferente, ajuste o `baseHref` no `angular.json`
-- O arquivo `.nojekyll` garante que o GitHub Pages não processe os arquivos com Jekyll
+- Se o repositório tiver um nome diferente (não for `username.github.io`), ajuste o `baseHref` no comando:
+  ```bash
+  ng build --configuration production --base-href "/nome-do-repositorio/"
+  ```
+- O `angular-cli-ghpages` cria automaticamente a branch `gh-pages` se ela não existir
+- O arquivo `.nojekyll` é criado automaticamente para desabilitar o processamento do Jekyll no GitHub Pages (evita erros com arquivos que começam com `_`)
+- Após o deploy, aguarde alguns minutos para o GitHub Pages atualizar o site
 
 ## 🎯 Funcionalidades
 
