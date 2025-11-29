@@ -58,6 +58,6 @@ git push origin gh-pages --force
 git checkout $CURRENT_BRANCH
 
 echo "✅ Deploy concluído com sucesso!"
-echo "🌐 Seu site estará disponível em: https://jonatansouzabr.github.io/mentormatch.github.io/"
+echo "🌐 Seu site estará disponível em: https://jonatansouzabr.github.io"
 echo "⏳ Aguarde alguns minutos para o GitHub Pages atualizar."
 
