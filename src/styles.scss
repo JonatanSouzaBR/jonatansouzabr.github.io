@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+// Importar Design Tokens MasterClass
+@import './styles/design-tokens';
+
 * {
   margin: 0;
   padding: 0;
@@ -12,16 +15,16 @@
 // Fontes: Sohne, Helvetica, Arial, sans-serif (na sequência exata)
 
 body {
-  background-color: #000000;
-  color: #FFFFFF;
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+  background-color: $mc-bg-primary;
+  color: $mc-text-primary;
+  font-family: $mc-font-family-primary;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smooth: always;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  font-size: 16px; // Base: 16px (Masterclass padrão)
-  line-height: 1.5;
+  font-weight: $mc-font-weight-regular;
+  letter-spacing: $mc-letter-spacing-wide;
+  font-size: $mc-font-size-base; // Base: 16px (Masterclass padrão)
+  line-height: $mc-line-height-loose;
   overflow-x: hidden;
 }
 
@@ -32,42 +35,46 @@ body {
 
 // Hero Title - Título principal grande (32-36px base, maior em hero)
 h1 {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 700;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-bold;
   font-size: clamp(2rem, 5vw, 2.25rem); // 32px - 36px (Masterclass padrão)
-  letter-spacing: 0.05em;
-  line-height: 1.1;
+  letter-spacing: $mc-letter-spacing-widest;
+  line-height: $mc-line-height-tight;
   text-transform: none; // Masterclass não usa uppercase em todos os títulos
+  color: $mc-text-primary;
 }
 
 // Section Titles - Títulos de seção (24-28px)
 h2 {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 700;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-bold;
   font-size: clamp(1.5rem, 3vw, 1.75rem); // 24px - 28px (Masterclass padrão)
-  letter-spacing: 0.04em;
-  line-height: 1.2;
+  letter-spacing: $mc-letter-spacing-wider;
+  line-height: $mc-line-height-snug;
   text-transform: none;
+  color: $mc-text-primary;
 }
 
 // Card Titles / Subsection Titles (18-22px)
 h3 {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 600;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-semibold;
   font-size: clamp(1.125rem, 2vw, 1.375rem); // 18px - 22px (Masterclass padrão)
-  letter-spacing: 0.03em;
-  line-height: 1.3;
+  letter-spacing: $mc-letter-spacing-normal;
+  line-height: $mc-line-height-normal;
   text-transform: none;
+  color: $mc-text-primary;
 }
 
 // Small Headings (16-18px)
 h4, h5, h6 {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 600;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-semibold;
   font-size: clamp(1rem, 1.5vw, 1.125rem); // 16px - 18px (Masterclass padrão)
-  letter-spacing: 0.02em;
-  line-height: 1.4;
+  letter-spacing: $mc-letter-spacing-wide;
+  line-height: $mc-line-height-relaxed;
   text-transform: none;
+  color: $mc-text-primary;
 }
 
 // ============================================
@@ -76,115 +83,126 @@ h4, h5, h6 {
 
 // Display Font - Para títulos hero muito grandes
 .display-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-bold;
+  letter-spacing: $mc-letter-spacing-widest;
   text-transform: uppercase;
-  line-height: 1.05;
+  line-height: $mc-line-height-tight;
+  color: $mc-text-primary;
 }
 
 // Heading Font - Para títulos de seção
 .heading-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-bold;
+  letter-spacing: $mc-letter-spacing-wider;
+  line-height: $mc-line-height-tight;
+  color: $mc-text-primary;
 }
 
 // Card Title Font - Para títulos de cards
 .card-title-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 700;
-  font-size: 1.5rem;
-  letter-spacing: 0.03em;
-  line-height: 1.15;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-bold;
+  font-size: $mc-font-size-xl; // 24px
+  letter-spacing: $mc-letter-spacing-normal;
+  line-height: $mc-line-height-snug;
+  color: $mc-text-primary;
 }
 
 // Body Font - Para texto corrido (16px - padrão Masterclass)
 .body-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 1rem; // 16px
-  letter-spacing: 0.02em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-base; // 16px
+  letter-spacing: $mc-letter-spacing-wide;
   text-transform: none;
-  line-height: 1.5;
+  line-height: $mc-line-height-loose;
+  color: $mc-text-primary;
 }
 
 // Navigation Font - Para navegação (14px - padrão Masterclass)
 .nav-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 0.875rem; // 14px
-  letter-spacing: 0.02em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-sm; // 14px
+  letter-spacing: $mc-letter-spacing-wide;
   text-transform: none;
-  line-height: 1.5;
+  line-height: $mc-line-height-loose;
+  color: $mc-text-secondary;
 }
 
 // Button Font - Para botões (16px - padrão Masterclass)
 .button-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 600;
-  font-size: 1rem; // 16px
-  letter-spacing: 0.02em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-semibold;
+  font-size: $mc-font-size-base; // 16px
+  letter-spacing: $mc-letter-spacing-wide;
   text-transform: none;
-  line-height: 1.5;
+  line-height: $mc-line-height-loose;
 }
 
 // Small Text Font - Para textos pequenos (14px - padrão Masterclass)
 .small-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 0.875rem; // 14px
-  letter-spacing: 0.02em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-sm; // 14px
+  letter-spacing: $mc-letter-spacing-wide;
   text-transform: none;
-  line-height: 1.5;
+  line-height: $mc-line-height-loose;
+  color: $mc-text-secondary;
 }
 
 // Extra Small Text - Para badges, labels (12px - padrão Masterclass)
 .text-xs {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 0.75rem; // 12px
-  letter-spacing: 0.02em;
-  line-height: 1.4;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-xs; // 12px
+  letter-spacing: $mc-letter-spacing-wide;
+  line-height: $mc-line-height-relaxed;
+  color: $mc-text-secondary;
 }
 
 // Mentor Name Font - Para nomes de mentores (16px - padrão Masterclass)
 .mentor-name-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 1rem; // 16px
-  letter-spacing: 0.02em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-base; // 16px
+  letter-spacing: $mc-letter-spacing-wide;
   text-transform: none;
-  line-height: 1.5;
+  line-height: $mc-line-height-loose;
+  color: $mc-text-primary;
 }
 
 // Price Font - Para preços (24px - padrão Masterclass)
 .price-font {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 700;
-  font-size: 1.5rem; // 24px
-  letter-spacing: 0.02em;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-bold;
+  font-size: $mc-font-size-xl; // 24px
+  letter-spacing: $mc-letter-spacing-wide;
   text-transform: none;
-  line-height: 1.2;
+  line-height: $mc-line-height-snug;
+  color: $mc-text-primary;
 }
 
 // Paragraph - Texto de parágrafo (16px - padrão Masterclass)
 p {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 1rem; // 16px
-  letter-spacing: 0.02em;
-  line-height: 1.5;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-base; // 16px
+  letter-spacing: $mc-letter-spacing-wide;
+  line-height: $mc-line-height-loose;
+  color: $mc-text-primary;
 }
 
 // Small paragraph (14px - padrão Masterclass)
 p.small, small {
-  font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
-  font-size: 0.875rem; // 14px
-  letter-spacing: 0.02em;
-  line-height: 1.5;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-regular;
+  font-size: $mc-font-size-sm; // 14px
+  letter-spacing: $mc-letter-spacing-wide;
+  line-height: $mc-line-height-loose;
+  color: $mc-text-secondary;
 }
 
 html {
@@ -197,16 +215,16 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: $mc-bg-primary;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333333;
-  border-radius: 5px;
+  background: $mc-gray-700;
+  border-radius: $mc-radius-md;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555555;
+  background: $mc-gray-600;
 }
 
 // Otimização de imagens
@@ -223,4 +241,128 @@ img {
 // Lazy loading para imagens - removido para garantir que imagens apareçam
 img {
   opacity: 1 !important;
+}
+
+// ============================================
+// CLASSES UTILITÁRIAS ADICIONAIS MASTERCLASS
+// ============================================
+
+// Botões MasterClass
+.btn-mc-primary {
+  background-color: $mc-button-primary-bg;
+  color: $mc-button-primary-text;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-semibold;
+  font-size: $mc-font-size-base;
+  padding: $mc-spacing-3 $mc-spacing-6;
+  border-radius: $mc-radius-md;
+  transition: all $mc-transition-base;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $mc-button-primary-hover;
+  }
+}
+
+.btn-mc-secondary {
+  background-color: $mc-button-secondary-bg;
+  color: $mc-button-secondary-text;
+  border: 2px solid $mc-button-secondary-border;
+  font-family: $mc-font-family-primary;
+  font-weight: $mc-font-weight-semibold;
+  font-size: $mc-font-size-base;
+  padding: $mc-spacing-3 $mc-spacing-6;
+  border-radius: $mc-radius-md;
+  transition: all $mc-transition-base;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $mc-button-secondary-hover;
+    color: $mc-button-secondary-text-hover;
+  }
+}
+
+// Cards MasterClass
+.mc-card {
+  background-color: $mc-bg-secondary;
+  border-radius: $mc-radius-lg;
+  overflow: hidden;
+  transition: transform $mc-transition-slow, box-shadow $mc-transition-slow;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $mc-shadow-lg;
+  }
+}
+
+// Text Colors
+.text-mc-primary {
+  color: $mc-text-primary;
+}
+
+.text-mc-secondary {
+  color: $mc-text-secondary;
+}
+
+.text-mc-tertiary {
+  color: $mc-text-tertiary;
+}
+
+// Background Colors
+.bg-mc-primary {
+  background-color: $mc-bg-primary;
+}
+
+.bg-mc-secondary {
+  background-color: $mc-bg-secondary;
+}
+
+.bg-mc-tertiary {
+  background-color: $mc-bg-tertiary;
+}
+
+// Logo Font - Fonte serifada estilo The Economist (autoritária e robusta)
+.logo-font {
+  font-family: 'Crimson Text', 'Lora', 'Times New Roman', 'Times', 'Georgia', serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.logo-font-m {
+  font-family: 'Crimson Text', 'Lora', 'Times New Roman', 'Times', 'Georgia', serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.cta-button-font {
+  font-family: 'Crimson Text', 'Lora', 'Times New Roman', 'Times', 'Georgia', serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+// Logo estilo MasterClass - Retângulo vermelho com texto branco
+.logo-economist-style {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $mc-red;
+  padding: 0.5rem 1rem;
+  font-family: 'Playfair Display', 'EB Garamond', 'Libre Baskerville', 'Times New Roman', 'Times', 'Georgia', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: $mc-white;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: default;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    padding: 0.375rem 0.75rem;
+    letter-spacing: 0.01em;
+  }
 }

@@ -13,7 +13,7 @@ interface UserProfile {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="relative bg-black min-h-screen w-full pt-20 md:pt-24">
+    <div class="relative bg-mc-black min-h-screen w-full pt-20 md:pt-24">
       <!-- Hero Carousel - Disney+ Style (Rectangular Banner) -->
       <div class="px-6 md:px-12 lg:px-16 pt-4 md:pt-6 mb-4">
         <section class="relative w-full overflow-hidden rounded-lg mx-auto group" 
@@ -61,10 +61,10 @@ interface UserProfile {
               <!-- Fallback se imagem não carregar -->
               <div *ngIf="imageErrors[i]" class="absolute inset-0 flex items-center justify-center z-10" style="background: linear-gradient(135deg, #1f2937 0%, #111827 100%);">
                 <div class="text-center px-8">
-                  <h2 class="text-3xl md:text-4xl font-bold text-white mb-2" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;">
+                  <h2 class="text-3xl md:text-4xl font-mc-bold text-mc-white mb-2 font-mc">
                     {{ masterclass.title }}
                   </h2>
-                  <p class="text-white/80" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;">
+                  <p class="text-mc-text-secondary font-mc">
                     {{ masterclass.category }}
                   </p>
                 </div>
@@ -78,13 +78,13 @@ interface UserProfile {
             <!-- Content Overlay - Disney+ Bottom Left Style -->
             <div class="relative z-20 w-full h-full flex items-end justify-start" style="padding: 0 1.5rem 1.5rem 1.5rem;">
               <div class="max-w-2xl" style="margin-bottom: 1rem;">
-                <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                <h1 class="text-mc-3xl md:text-mc-4xl lg:text-mc-5xl font-mc-bold text-mc-white mb-2 leading-tight font-mc" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
                   {{ masterclass.title }}
                 </h1>
-                <p class="text-xs md:text-sm text-white mb-2 max-w-lg leading-relaxed" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; text-shadow: 0 1px 4px rgba(0,0,0,0.8); opacity: 0.95;">
+                <p class="text-mc-sm md:text-mc-base text-mc-text-secondary mb-2 max-w-lg leading-relaxed font-mc" style="text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
                   {{ masterclass.description }}
                 </p>
-                <div class="flex items-center gap-2 text-white text-xs" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; opacity: 0.9;">
+                <div class="flex items-center gap-2 text-mc-text-secondary text-mc-sm font-mc">
                   <span>{{ masterclass.duration }}</span>
                   <span>•</span>
                   <span>{{ masterclass.category }}</span>
@@ -97,7 +97,7 @@ interface UserProfile {
       </div>
 
       <!-- Hero Carousel Indicators - Disney+ Style (Dots with white border on active) -->
-      <div class="relative z-10 bg-black -mt-1">
+      <div class="relative z-10 bg-mc-black -mt-1">
         <div class="flex justify-center items-center gap-2 py-2">
           <button *ngFor="let slide of featuredMasterclasses; let i = index"
                   (click)="goToHeroSlide(i)"
@@ -113,25 +113,25 @@ interface UserProfile {
       </div>
 
       <!-- Categories Section - MasterClass Style -->
-      <section class="px-6 md:px-12 lg:px-16 pt-4 md:pt-6 pb-10 md:pb-12 bg-black">
+      <section class="px-6 md:px-12 lg:px-16 pt-4 md:pt-6 pb-10 md:pb-12 bg-mc-black">
           <div class="mb-5 md:mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-white mb-3 md:mb-4" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;">
+            <h2 class="text-2xl md:text-3xl font-mc-bold text-mc-white mb-3 md:mb-4 font-mc">
               Explore por Categoria
             </h2>
           </div>
           
           <div class="flex flex-wrap gap-3 md:gap-4 justify-center">
             <button *ngFor="let category of allCategories" 
-                    class="group flex items-center gap-2 px-4 py-2.5 bg-gray-900/60 hover:bg-gray-800/80 rounded-md transition-all duration-200 cursor-pointer"
+                    class="group flex items-center gap-2 px-4 py-2.5 bg-mc-gray-900/60 hover:bg-mc-gray-800/80 rounded-mc-md transition-all duration-mc-base cursor-pointer font-mc"
                     [class.border]="category.id === 'trending'"
-                    [class.border-red-600]="category.id === 'trending'"
-                    [class.hover:border-red-500]="category.id === 'trending'"
+                    [class.border-mc-red]="category.id === 'trending'"
+                    [class.hover:border-mc-red]="category.id === 'trending'"
                     (click)="filterByCategory(category.id)">
               <div class="transition-colors flex-shrink-0"
-                   [class.text-red-600]="category.id === 'trending'"
-                   [class.text-gray-500]="category.id !== 'trending'"
-                   [class.group-hover:text-white]="category.id !== 'trending'"
-                   [class.group-hover:text-red-500]="category.id === 'trending'">
+                   [class.text-mc-red]="category.id === 'trending'"
+                   [class.text-mc-gray-500]="category.id !== 'trending'"
+                   [class.group-hover:text-mc-white]="category.id !== 'trending'"
+                   [class.group-hover:text-mc-red]="category.id === 'trending'">
                 <svg *ngIf="category.icon === 'trending'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                 </svg>
@@ -167,12 +167,11 @@ interface UserProfile {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                 </svg>
               </div>
-              <span class="text-sm font-bold whitespace-nowrap transition-colors" 
-                    [class.text-red-600]="category.id === 'trending'"
-                    [class.text-gray-500]="category.id !== 'trending'"
-                    [class.group-hover:text-white]="category.id !== 'trending'"
-                    [class.group-hover:text-red-500]="category.id === 'trending'"
-                    style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif;">
+              <span class="text-mc-sm font-mc-semibold whitespace-nowrap transition-colors font-mc" 
+                    [class.text-mc-red]="category.id === 'trending'"
+                    [class.text-mc-gray-500]="category.id !== 'trending'"
+                    [class.group-hover:text-mc-white]="category.id !== 'trending'"
+                    [class.group-hover:text-mc-red]="category.id === 'trending'">
                 {{ category.name }}
               </span>
             </button>
@@ -180,14 +179,14 @@ interface UserProfile {
         </section>
 
       <!-- Carousels Section - Premium Spacing -->
-      <div class="relative bg-black w-full">
+      <div class="relative bg-mc-black w-full">
         <div class="space-y-12 md:space-y-14 pb-16 md:pb-20">
           <!-- Popular Now - Masterclass Style -->
           <section class="px-6 md:px-12 lg:px-16 pt-4 md:pt-6">
             <div class="mb-6">
               <div class="flex items-center justify-between">
-                <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 24px;">Em Alta</h2>
-                <a routerLink="/masterclasses" class="text-gray-400 hover:text-white transition-colors underline" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 14px;">
+                <h2 class="text-mc-xl md:text-mc-2xl font-mc-bold text-mc-white tracking-tight font-mc">Em Alta</h2>
+                <a routerLink="/masterclasses" class="text-mc-text-tertiary hover:text-mc-white transition-colors underline font-mc text-mc-sm">
                   Ver todos
                 </a>
               </div>
@@ -221,10 +220,10 @@ interface UserProfile {
                         
                         <!-- Badge - Top Left -->
                         <div class="absolute top-2 left-2 z-10">
-                          <span *ngIf="masterclass.isNew" class="inline-block px-2 py-1 bg-white text-black font-semibold rounded-full" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 11px;">
+                          <span *ngIf="masterclass.isNew" class="inline-block px-2 py-1 bg-mc-white text-mc-black font-mc-semibold rounded-full font-mc text-mc-xs">
                             Novo
                           </span>
-                          <span *ngIf="masterclass.allEpisodes" class="inline-block px-2 py-1 bg-white text-black font-semibold rounded-full" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 11px;">
+                          <span *ngIf="masterclass.allEpisodes" class="inline-block px-2 py-1 bg-mc-white text-mc-black font-mc-semibold rounded-full font-mc text-mc-xs">
                             Todos os Episódios Disponíveis
                           </span>
                         </div>
@@ -232,24 +231,24 @@ interface UserProfile {
                         <!-- Text Content Overlay - Bottom -->
                         <div class="absolute bottom-0 left-0 right-0 p-3 z-10">
                           <div class="mb-1.5">
-                            <p class="text-white/80 mb-0.5" *ngIf="masterclass.seriesType" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 11px;">
+                            <p class="text-mc-text-secondary mb-0.5 font-mc text-mc-xs" *ngIf="masterclass.seriesType">
                               {{ masterclass.seriesType }}
                             </p>
-                            <h3 class="font-semibold text-white mb-1.5 line-clamp-2 leading-tight" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 15px;">
+                            <h3 class="font-mc-semibold text-mc-white mb-1.5 line-clamp-2 leading-tight font-mc text-mc-lg">
                               {{ masterclass.title }}
                             </h3>
                           </div>
                           <div class="space-y-0.5">
-                            <p class="text-white/90" *ngIf="masterclass.instructors" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 12px;">
+                            <p class="text-mc-text-primary font-mc text-mc-sm" *ngIf="masterclass.instructors">
                               {{ masterclass.instructors }}
                             </p>
-                            <p class="text-white/90" *ngIf="!masterclass.instructors && !masterclass.seriesType" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 12px;">
+                            <p class="text-mc-text-primary font-mc text-mc-sm" *ngIf="!masterclass.instructors && !masterclass.seriesType">
                               Com {{ masterclass.mentor }}
                             </p>
-                            <p class="text-white/70" *ngIf="masterclass.episodes" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 11px;">
+                            <p class="text-mc-text-tertiary font-mc text-mc-xs" *ngIf="masterclass.episodes">
                               {{ masterclass.episodes }}
                             </p>
-                            <p class="text-white/70" *ngIf="!masterclass.episodes" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 11px;">
+                            <p class="text-mc-text-tertiary font-mc text-mc-xs" *ngIf="!masterclass.episodes">
                               {{ masterclass.duration }}
                             </p>
                           </div>
@@ -277,7 +276,7 @@ interface UserProfile {
           <!-- Trending Now -->
           <section class="px-6 md:px-12 lg:px-16">
             <div class="mb-8">
-              <h2 class="font-bold text-white tracking-tight" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 24px;">Em Alta Agora</h2>
+              <h2 class="font-mc-bold text-mc-white tracking-tight font-mc text-mc-xl">Em Alta Agora</h2>
             </div>
             <div class="relative group">
               <div class="overflow-x-auto scrollbar-hide" id="trendingCarousel">
@@ -305,10 +304,10 @@ interface UserProfile {
                           <img [src]="masterclass.mentorImage" 
                                [alt]="masterclass.mentor"
                                class="w-9 h-9 rounded-full object-cover border-2 border-white/30">
-                          <span class="text-white body-font font-medium" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 14px;">{{ masterclass.mentor }}</span>
+                          <span class="text-mc-white body-font font-mc-medium font-mc text-mc-sm">{{ masterclass.mentor }}</span>
                         </div>
-                        <h3 class="text-white font-semibold mb-2 line-clamp-2 leading-snug" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 18px;">{{ masterclass.title }}</h3>
-                        <div class="flex items-center space-x-2 text-gray-400" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 12px;">
+                        <h3 class="text-mc-white font-mc-semibold mb-2 line-clamp-2 leading-snug font-mc text-mc-lg">{{ masterclass.title }}</h3>
+                        <div class="flex items-center space-x-2 text-mc-text-tertiary font-mc text-mc-xs">
                           <span>{{ masterclass.duration }}</span>
                           <span>•</span>
                           <span class="capitalize">{{ masterclass.category }}</span>
@@ -336,7 +335,7 @@ interface UserProfile {
           <!-- Category Carousels - Limited to 3 categories for premium feel -->
           <section *ngFor="let category of categories.slice(0, 3)" class="px-6 md:px-12 lg:px-16">
             <div class="mb-8">
-              <h2 class="font-bold text-white tracking-tight" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 24px;">{{ category.name }}</h2>
+              <h2 class="font-mc-bold text-mc-white tracking-tight font-mc text-mc-xl">{{ category.name }}</h2>
             </div>
             <div class="relative group">
               <div class="overflow-x-auto scrollbar-hide" [attr.data-carousel]="category.id">
@@ -364,10 +363,10 @@ interface UserProfile {
                           <img [src]="masterclass.mentorImage" 
                                [alt]="masterclass.mentor"
                                class="w-9 h-9 rounded-full object-cover border-2 border-white/30">
-                          <span class="text-white body-font font-medium" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 14px;">{{ masterclass.mentor }}</span>
+                          <span class="text-mc-white body-font font-mc-medium font-mc text-mc-sm">{{ masterclass.mentor }}</span>
                         </div>
-                        <h3 class="text-white font-semibold mb-2 line-clamp-2 leading-snug" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 18px;">{{ masterclass.title }}</h3>
-                        <div class="flex items-center space-x-2 text-gray-400" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 12px;">
+                        <h3 class="text-mc-white font-mc-semibold mb-2 line-clamp-2 leading-snug font-mc text-mc-lg">{{ masterclass.title }}</h3>
+                        <div class="flex items-center space-x-2 text-mc-text-tertiary font-mc text-mc-xs">
                           <span>{{ masterclass.duration }}</span>
                           <span>•</span>
                           <span class="capitalize">{{ masterclass.category }}</span>

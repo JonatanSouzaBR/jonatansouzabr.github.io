@@ -18,11 +18,11 @@ interface Masterclass {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="min-h-screen bg-premium-black py-12">
+    <div class="min-h-screen bg-mc-black py-12">
       <div class="container mx-auto px-6">
         <div class="mb-12">
-          <h1 class="font-bold mb-4 tracking-wide" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 36px;">Masterclasses</h1>
-          <p class="text-gray-400 body-font" style="font-family: 'Sohne', 'Helvetica', 'Arial', sans-serif; font-size: 16px;">Descubra conhecimento de especialistas de classe mundial</p>
+          <h1 class="font-mc-bold mb-4 tracking-wide font-mc text-mc-4xl text-mc-white">Masterclasses</h1>
+          <p class="text-mc-text-secondary body-font font-mc text-mc-base">Descubra conhecimento de especialistas de classe mundial</p>
         </div>
 
         <!-- Filters -->
@@ -30,10 +30,10 @@ interface Masterclass {
           <button 
             *ngFor="let category of categories" 
             (click)="filterByCategory(category)"
-            [class.bg-premium-white]="selectedCategory === category"
-            [class.text-premium-black]="selectedCategory === category"
-            [class.text-premium-white]="selectedCategory !== category"
-            class="px-6 py-2 rounded border border-gray-700 hover:border-premium-white transition-all small-font">
+            [class.bg-mc-white]="selectedCategory === category"
+            [class.text-mc-black]="selectedCategory === category"
+            [class.text-mc-white]="selectedCategory !== category"
+            class="px-6 py-2 rounded-mc-md border border-mc-gray-700 hover:border-mc-white transition-all small-font font-mc">
             {{ category }}
           </button>
         </div>
@@ -42,19 +42,19 @@ interface Masterclass {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div 
             *ngFor="let masterclass of filteredMasterclasses" 
-            class="bg-premium-gray rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer group"
+            class="bg-mc-gray-900 rounded-mc-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-mc-slow cursor-pointer group"
             [routerLink]="['/masterclasses', masterclass.id]">
             <div class="aspect-video relative overflow-hidden">
               <img [src]="masterclass.thumbnail" 
                    [alt]="masterclass.title"
                    loading="lazy"
                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-              <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center group-hover:bg-opacity-20 transition-all">
-                <svg class="w-20 h-20 text-premium-white opacity-70 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
+              <div class="absolute inset-0 bg-mc-black bg-opacity-40 flex items-center justify-center group-hover:bg-opacity-20 transition-all">
+                <svg class="w-20 h-20 text-mc-white opacity-70 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
-              <div class="absolute top-4 right-4 bg-premium-black bg-opacity-75 px-3 py-1 rounded small-font backdrop-blur-sm">
+              <div class="absolute top-4 right-4 bg-mc-black bg-opacity-75 px-3 py-1 rounded-mc-md small-font backdrop-blur-sm font-mc">
                 {{ masterclass.category }}
               </div>
             </div>
@@ -64,13 +64,13 @@ interface Masterclass {
                      [alt]="masterclass.mentor"
                      loading="lazy"
                      class="w-12 h-12 rounded-full object-cover mr-3 border-2 border-gray-700">
-                <p class="text-gray-400 mentor-name-font">{{ masterclass.mentor }}</p>
+                <p class="text-mc-text-tertiary mentor-name-font font-mc">{{ masterclass.mentor }}</p>
               </div>
-              <h3 class="card-title-font mb-2 group-hover:text-gray-300 transition-colors">
+              <h3 class="card-title-font mb-2 group-hover:text-mc-gray-300 transition-colors font-mc">
                 {{ masterclass.title }}
               </h3>
-              <p class="text-gray-500 small-font mb-4 line-clamp-2">{{ masterclass.description }}</p>
-              <div class="flex items-center justify-between pt-4 border-t border-gray-700">
+              <p class="text-mc-gray-500 small-font mb-4 line-clamp-2 font-mc">{{ masterclass.description }}</p>
+              <div class="flex items-center justify-between pt-4 border-t border-mc-gray-700">
                 <span class="price-font">{{ masterclass.price }}</span>
                 <span class="text-gray-500 small-font">{{ masterclass.duration }}</span>
               </div>
@@ -80,7 +80,7 @@ interface Masterclass {
 
         <!-- Empty State -->
         <div *ngIf="filteredMasterclasses.length === 0" class="text-center py-20">
-          <p class="text-lg text-gray-400 body-font">Nenhuma masterclass encontrada nesta categoria.</p>
+          <p class="text-lg text-mc-text-tertiary body-font font-mc">Nenhuma masterclass encontrada nesta categoria.</p>
         </div>
       </div>
     </div>
