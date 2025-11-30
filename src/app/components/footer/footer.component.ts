@@ -11,9 +11,9 @@ import { RouterLink } from '@angular/router';
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-8">
           <div class="col-span-2">
             <div class="mb-4">
-              <span class="logo-economist-style">
-                MentorMatch
-              </span>
+              <a routerLink="/" class="mentormatch-logo-chanel cursor-pointer">
+                <span class="logo-text-chanel">MentorMatch</span>
+              </a>
             </div>
             <p class="text-mc-text-tertiary body-font mb-4 font-mc text-mc-sm">
               Conectando mentores e mentorados através de conhecimento de qualidade.

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../../services/cart.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-masterclass-detail',
@@ -17,9 +19,10 @@ import { CommonModule } from '@angular/common';
           <!-- Main Content -->
           <div class="lg:col-span-2">
             <div class="aspect-video rounded-mc-lg mb-8 relative overflow-hidden">
-              <img [src]="currentMasterclass.videoImage || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop'" 
+              <img [src]="currentMasterclass.videoImage || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop&q=90'" 
                    [alt]="currentMasterclass.title || 'Masterclass'"
                    loading="eager"
+                   (error)="handleImageError($event)"
                    class="w-full h-full object-cover">
               <div class="absolute inset-0 bg-mc-black bg-opacity-30 flex items-center justify-center">
                 <button class="w-24 h-24 bg-mc-white rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-mc-2xl">
@@ -78,9 +81,10 @@ import { CommonModule } from '@angular/common';
             <div class="bg-mc-gray-900 rounded-mc-lg p-6">
               <h2 class="card-title-font mb-4 font-mc text-mc-white">Sobre o Mentor</h2>
               <div class="flex items-start">
-                <img [src]="currentMasterclass.mentorImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'" 
+                <img [src]="currentMasterclass.mentorImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=90'" 
                      [alt]="currentMasterclass.mentor || 'Mentor'"
                      loading="lazy"
+                     (error)="handleMentorImageError($event)"
                      class="w-20 h-20 rounded-full mr-4 object-cover border-2 border-mc-gray-700">
                 <div>
                   <h3 class="text-lg mentor-name-font font-mc-semibold mb-2 font-mc text-mc-white">{{ currentMasterclass.mentor || 'João Silva' }}</h3>
@@ -102,12 +106,25 @@ import { CommonModule } from '@angular/common';
                 <p class="text-mc-text-tertiary small-font font-mc">Acesso vitalício</p>
               </div>
 
-              <button class="w-full bg-mc-white text-mc-black py-4 rounded-mc-md button-font hover:bg-mc-gray-200 transition-colors mb-4 font-mc">
-                Comprar Agora
+              <button (click)="addToCart()" 
+                      [class.bg-mc-gray-700]="isInCart"
+                      [class.text-mc-gray-400]="isInCart"
+                      [class.bg-mc-white]="!isInCart"
+                      [class.text-mc-black]="!isInCart"
+                      class="w-full py-4 rounded-mc-md button-font hover:bg-mc-gray-200 transition-colors mb-4 font-mc"
+                      [disabled]="isInCart">
+                {{ isInCart ? 'Já no Carrinho' : 'Comprar Agora' }}
               </button>
 
-              <button class="w-full border-2 border-mc-white text-mc-white py-4 rounded-mc-md button-font hover:bg-mc-white hover:text-mc-black transition-colors mb-6 font-mc">
-                Adicionar à Lista de Desejos
+              <button (click)="toggleWishlist()" 
+                      [class.bg-mc-red]="isInWishlist"
+                      [class.border-mc-red]="isInWishlist"
+                      [class.border-2]="!isInWishlist"
+                      [class.border-mc-white]="!isInWishlist"
+                      [class.text-mc-white]="isInWishlist"
+                      [class.text-mc-white]="!isInWishlist"
+                      class="w-full py-4 rounded-mc-md button-font hover:bg-mc-white hover:text-mc-black transition-colors mb-6 font-mc">
+                {{ isInWishlist ? 'Remover da Lista de Desejos' : 'Adicionar à Lista de Desejos' }}
               </button>
 
               <div class="space-y-4 small-font text-mc-text-tertiary font-mc">
@@ -145,38 +162,112 @@ import { CommonModule } from '@angular/common';
   `,
   styles: []
 })
-export class MasterclassDetailComponent {
+export class MasterclassDetailComponent implements OnInit {
   masterclassData: any = {
     1: {
+      id: 1,
       title: 'Liderança e Gestão de Equipes',
       mentor: 'João Silva',
       mentorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
       videoImage: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
-      description: 'Nesta masterclass exclusiva, você aprenderá técnicas avançadas de liderança e como construir equipes de alto desempenho. João Silva, com mais de 20 anos de experiência em gestão de pessoas, compartilha seus segredos e estratégias comprovadas.'
+      thumbnail: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
+      description: 'Nesta masterclass exclusiva, você aprenderá técnicas avançadas de liderança e como construir equipes de alto desempenho. João Silva, com mais de 20 anos de experiência em gestão de pessoas, compartilha seus segredos e estratégias comprovadas.',
+      price: 299
     },
     2: {
+      id: 2,
       title: 'Empreendedorismo Digital',
       mentor: 'Maria Santos',
       mentorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
       videoImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&h=1080&fit=crop',
-      description: 'Do conceito à execução: aprenda como criar e escalar negócios digitais de sucesso. Maria Santos, fundadora de múltiplas startups, compartilha sua experiência prática.'
+      thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&h=1080&fit=crop',
+      description: 'Do conceito à execução: aprenda como criar e escalar negócios digitais de sucesso. Maria Santos, fundadora de múltiplas startups, compartilha sua experiência prática.',
+      price: 299
     },
     3: {
+      id: 3,
       title: 'Marketing e Branding',
       mentor: 'Carlos Oliveira',
       mentorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
       videoImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop',
-      description: 'Estratégias de marketing modernas e construção de marcas memoráveis. Carlos Oliveira, diretor de marketing de grandes empresas, ensina os segredos do branding de sucesso.'
+      thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop',
+      description: 'Estratégias de marketing modernas e construção de marcas memoráveis. Carlos Oliveira, diretor de marketing de grandes empresas, ensina os segredos do branding de sucesso.',
+      price: 299
     }
   };
 
   currentMasterclass: any = {};
+  isInCart = false;
+  isInWishlist = false;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private cartService: CartService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {
     this.route.params.subscribe(params => {
       const id = +params['id'];
       this.currentMasterclass = this.masterclassData[id] || this.masterclassData[1];
+      this.checkCartAndWishlist();
     });
+  }
+
+  ngOnInit() {
+    this.checkCartAndWishlist();
+  }
+
+  checkCartAndWishlist() {
+    if (this.currentMasterclass.id) {
+      this.isInCart = this.cartService.isInCart(this.currentMasterclass.id);
+      this.isInWishlist = this.cartService.isInWishlist(this.currentMasterclass.id);
+    }
+  }
+
+  addToCart() {
+    if (this.currentMasterclass.id && !this.isInCart) {
+      this.cartService.addToCart({
+        id: this.currentMasterclass.id,
+        title: this.currentMasterclass.title,
+        mentor: this.currentMasterclass.mentor,
+        price: this.currentMasterclass.price || 299,
+        thumbnail: this.currentMasterclass.thumbnail || this.currentMasterclass.videoImage,
+        mentorImage: this.currentMasterclass.mentorImage
+      });
+      this.isInCart = true;
+      this.notificationService.success('Adicionado ao carrinho!');
+    }
+  }
+
+  toggleWishlist() {
+    if (this.currentMasterclass.id) {
+      if (this.isInWishlist) {
+        this.cartService.removeFromWishlist(this.currentMasterclass.id);
+        this.isInWishlist = false;
+        this.notificationService.info('Removido da lista de desejos');
+      } else {
+        this.cartService.addToWishlist({
+          id: this.currentMasterclass.id,
+          title: this.currentMasterclass.title,
+          mentor: this.currentMasterclass.mentor,
+          price: this.currentMasterclass.price || 299,
+          thumbnail: this.currentMasterclass.thumbnail || this.currentMasterclass.videoImage,
+          mentorImage: this.currentMasterclass.mentorImage
+        });
+        this.isInWishlist = true;
+        this.notificationService.success('Adicionado à lista de desejos!');
+      }
+    }
+  }
+
+  handleImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop&q=90';
+  }
+
+  handleMentorImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=90';
   }
 }
 

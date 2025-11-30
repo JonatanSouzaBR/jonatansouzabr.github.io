@@ -121,17 +121,25 @@ interface UserProfile {
           </div>
           
           <div class="flex flex-wrap gap-3 md:gap-4 justify-center">
-            <button *ngFor="let category of allCategories" 
-                    class="group flex items-center gap-2 px-4 py-2.5 bg-mc-gray-900/60 hover:bg-mc-gray-800/80 rounded-mc-md transition-all duration-mc-base cursor-pointer font-mc"
-                    [class.border]="category.id === 'trending'"
-                    [class.border-mc-red]="category.id === 'trending'"
-                    [class.hover:border-mc-red]="category.id === 'trending'"
-                    (click)="filterByCategory(category.id)">
-              <div class="transition-colors flex-shrink-0"
-                   [class.text-mc-red]="category.id === 'trending'"
-                   [class.text-mc-gray-500]="category.id !== 'trending'"
-                   [class.group-hover:text-mc-white]="category.id !== 'trending'"
-                   [class.group-hover:text-mc-red]="category.id === 'trending'">
+            <button 
+              *ngFor="let category of allCategories" 
+              class="group flex items-center gap-2 px-4 py-2.5 rounded-mc-md transition-all duration-mc-base cursor-pointer font-mc"
+              [ngClass]="{
+                'bg-mc-red': selectedCategory === category.id,
+                'bg-mc-gray-900/60': selectedCategory !== category.id,
+                'hover:bg-mc-gray-800/80': selectedCategory !== category.id,
+                'border': selectedCategory === category.id,
+                'border-mc-red': selectedCategory === category.id,
+                'hover:border-mc-red': selectedCategory !== category.id
+              }"
+              (click)="filterByCategory(category.id)">
+              <div 
+                class="transition-colors flex-shrink-0"
+                [ngClass]="{
+                  'text-mc-white': selectedCategory === category.id,
+                  'text-mc-gray-500': selectedCategory !== category.id
+                }"
+                [class.group-hover:text-mc-white]="selectedCategory !== category.id">
                 <svg *ngIf="category.icon === 'trending'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                 </svg>
@@ -167,11 +175,13 @@ interface UserProfile {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                 </svg>
               </div>
-              <span class="text-mc-sm font-mc-semibold whitespace-nowrap transition-colors font-mc" 
-                    [class.text-mc-red]="category.id === 'trending'"
-                    [class.text-mc-gray-500]="category.id !== 'trending'"
-                    [class.group-hover:text-mc-white]="category.id !== 'trending'"
-                    [class.group-hover:text-mc-red]="category.id === 'trending'">
+              <span 
+                class="text-mc-sm font-mc-semibold whitespace-nowrap transition-colors font-mc" 
+                [ngClass]="{
+                  'text-mc-white': selectedCategory === category.id,
+                  'text-mc-gray-500': selectedCategory !== category.id,
+                  'group-hover:text-mc-white': selectedCategory !== category.id
+                }">
                 {{ category.name }}
               </span>
             </button>
@@ -185,26 +195,30 @@ interface UserProfile {
           <section class="px-6 md:px-12 lg:px-16 pt-4 md:pt-6">
             <div class="mb-6">
               <div class="flex items-center justify-between">
-                <h2 class="text-mc-xl md:text-mc-2xl font-mc-bold text-mc-white tracking-tight font-mc">Em Alta</h2>
-                <a routerLink="/masterclasses" class="text-mc-text-tertiary hover:text-mc-white transition-colors underline font-mc text-mc-sm">
+                <h2 class="text-mc-xl md:text-mc-2xl font-mc-bold text-mc-white tracking-tight font-mc">{{ getSectionTitle() }}</h2>
+                <a routerLink="/masterclasses" [queryParams]="selectedCategory !== 'trending' ? {category: selectedCategory} : {}" class="text-mc-text-tertiary hover:text-mc-white transition-colors underline font-mc text-mc-sm">
                   Ver todos
                 </a>
               </div>
             </div>
             <div class="relative group">
-              <div class="overflow-x-auto scrollbar-hide" 
+              <div *ngIf="getFilteredPopularMasterclasses().length === 0" class="text-center py-12">
+                <p class="text-mc-text-tertiary font-mc text-mc-base">Nenhum conteúdo encontrado nesta categoria.</p>
+              </div>
+              <div *ngIf="getFilteredPopularMasterclasses().length > 0" class="overflow-x-auto scrollbar-hide" 
                    id="popularCarousel"
                    (scroll)="onPopularCarouselScroll()">
                 <div class="flex space-x-4 pb-6">
-                  <div *ngFor="let masterclass of popularMasterclasses" 
+                  <div *ngFor="let masterclass of getFilteredPopularMasterclasses()" 
                        class="flex-shrink-0 w-[200px] md:w-[240px] cursor-pointer masterclass-card"
                        [routerLink]="['/masterclasses', masterclass.id]">
                     <div class="relative rounded-lg overflow-hidden group/item transition-all duration-300 border-4 border-transparent hover:border-white">
                       <!-- Background Image with Text Overlay -->
                       <div class="relative aspect-[3/4] overflow-hidden">
-                        <img [src]="masterclass.mentorImage" 
+                        <img [src]="masterclass.mentorImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&q=95'" 
                              [alt]="masterclass.mentor"
                              loading="lazy"
+                             (error)="handleMentorImageError($event)"
                              class="w-full h-full object-cover object-center transition-transform duration-500 group-hover/item:scale-110">
                         <!-- Gradient Overlay for Text Readability -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 group-hover/item:from-black/70 group-hover/item:via-black/30 group-hover/item:to-black/10 transition-all duration-300"></div>
@@ -259,7 +273,7 @@ interface UserProfile {
                 </div>
               </div>
               <!-- Carousel Indicators (Dots) -->
-              <div class="flex justify-center items-center gap-2 mt-6" *ngIf="popularCarouselPages.length > 1">
+              <div class="flex justify-center items-center gap-2 mt-6" *ngIf="popularCarouselPages.length > 1 && getFilteredPopularMasterclasses().length > 0">
                 <button *ngFor="let page of popularCarouselPages; let i = index"
                         (click)="goToPopularPage(i)"
                         [ngClass]="{
@@ -276,18 +290,22 @@ interface UserProfile {
           <!-- Trending Now -->
           <section class="px-6 md:px-12 lg:px-16">
             <div class="mb-8">
-              <h2 class="font-mc-bold text-mc-white tracking-tight font-mc text-mc-xl">Em Alta Agora</h2>
+              <h2 class="font-mc-bold text-mc-white tracking-tight font-mc text-mc-xl">{{ getTrendingSectionTitle() }}</h2>
             </div>
             <div class="relative group">
-              <div class="overflow-x-auto scrollbar-hide" id="trendingCarousel">
+              <div *ngIf="getFilteredTrendingMasterclasses().length === 0" class="text-center py-12">
+                <p class="text-mc-text-tertiary font-mc text-mc-base">Nenhum conteúdo encontrado nesta categoria.</p>
+              </div>
+              <div *ngIf="getFilteredTrendingMasterclasses().length > 0" class="overflow-x-auto scrollbar-hide" id="trendingCarousel">
                 <div class="flex space-x-4 pb-6">
-                  <div *ngFor="let masterclass of trendingMasterclasses.slice(0, 12)" 
+                  <div *ngFor="let masterclass of getFilteredTrendingMasterclasses()" 
                        class="flex-shrink-0 w-[240px] md:w-[320px] lg:w-[360px] cursor-pointer netflix-card"
                        [routerLink]="['/masterclasses', masterclass.id]">
                     <div class="relative aspect-video rounded-lg overflow-hidden group/item bg-gray-900 shadow-2xl transition-all duration-300 border-4 border-transparent hover:border-white">
-                      <img [src]="masterclass.thumbnail" 
+                      <img [src]="masterclass.thumbnail || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop&q=90'" 
                            [alt]="masterclass.title"
                            loading="lazy"
+                           (error)="handleThumbnailError($event)"
                            class="w-full h-full object-cover transition-transform duration-500 group-hover/item:scale-110">
                       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover/item:from-black/70 group-hover/item:via-black/40 group-hover/item:to-transparent transition-all duration-300"></div>
                       
@@ -301,8 +319,9 @@ interface UserProfile {
                       </div>
                       <div class="absolute bottom-0 left-0 right-0 p-5">
                         <div class="flex items-center space-x-3 mb-3">
-                          <img [src]="masterclass.mentorImage" 
+                          <img [src]="masterclass.mentorImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'" 
                                [alt]="masterclass.mentor"
+                               (error)="handleMentorImageError($event)"
                                class="w-9 h-9 rounded-full object-cover border-2 border-white/30">
                           <span class="text-mc-white body-font font-mc-medium font-mc text-mc-sm">{{ masterclass.mentor }}</span>
                         </div>
@@ -332,21 +351,22 @@ interface UserProfile {
             </div>
           </section>
 
-          <!-- Category Carousels - Limited to 3 categories for premium feel -->
-          <section *ngFor="let category of categories.slice(0, 3)" class="px-6 md:px-12 lg:px-16">
+          <!-- Category Carousels - Mostrar apenas se não houver filtro específico ou se for categoria relacionada -->
+          <section *ngIf="shouldShowCategoryCarousels()" class="px-6 md:px-12 lg:px-16">
             <div class="mb-8">
-              <h2 class="font-mc-bold text-mc-white tracking-tight font-mc text-mc-xl">{{ category.name }}</h2>
+              <h2 class="font-mc-bold text-mc-white tracking-tight font-mc text-mc-xl">Mais em {{ getSelectedCategoryName() }}</h2>
             </div>
             <div class="relative group">
-              <div class="overflow-x-auto scrollbar-hide" [attr.data-carousel]="category.id">
+              <div class="overflow-x-auto scrollbar-hide" [attr.data-carousel]="selectedCategory">
                 <div class="flex space-x-4 pb-6">
-                  <div *ngFor="let masterclass of getMasterclassesByCategory(category.id).slice(0, 12)" 
+                  <div *ngFor="let masterclass of getFilteredCategoryMasterclasses()" 
                        class="flex-shrink-0 w-[240px] md:w-[320px] lg:w-[360px] cursor-pointer netflix-card"
                        [routerLink]="['/masterclasses', masterclass.id]">
                     <div class="relative aspect-video rounded-lg overflow-hidden group/item bg-gray-900 shadow-2xl transition-all duration-300 border-4 border-transparent hover:border-white">
-                      <img [src]="masterclass.thumbnail" 
+                      <img [src]="masterclass.thumbnail || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop&q=90'" 
                            [alt]="masterclass.title"
                            loading="lazy"
+                           (error)="handleThumbnailError($event)"
                            class="w-full h-full object-cover transition-transform duration-500 group-hover/item:scale-110">
                       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover/item:from-black/70 group-hover/item:via-black/40 group-hover/item:to-transparent transition-all duration-300"></div>
                       
@@ -360,8 +380,9 @@ interface UserProfile {
                       </div>
                       <div class="absolute bottom-0 left-0 right-0 p-5">
                         <div class="flex items-center space-x-3 mb-3">
-                          <img [src]="masterclass.mentorImage" 
+                          <img [src]="masterclass.mentorImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'" 
                                [alt]="masterclass.mentor"
+                               (error)="handleMentorImageError($event)"
                                class="w-9 h-9 rounded-full object-cover border-2 border-white/30">
                           <span class="text-mc-white body-font font-mc-medium font-mc text-mc-sm">{{ masterclass.mentor }}</span>
                         </div>
@@ -376,13 +397,13 @@ interface UserProfile {
                   </div>
                 </div>
               </div>
-              <button (click)="scrollCarousel(category.id, 'left')" 
+              <button (click)="scrollCarousel(selectedCategory, 'left')" 
                       class="carousel-btn-left absolute left-0 top-0 bottom-6 w-14 h-full bg-gradient-to-r from-black/80 via-black/60 to-transparent hover:from-black/90 hover:via-black/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
               </button>
-              <button (click)="scrollCarousel(category.id, 'right')" 
+              <button (click)="scrollCarousel(selectedCategory, 'right')" 
                       class="carousel-btn-right absolute right-0 top-0 bottom-6 w-14 h-full bg-gradient-to-l from-black/80 via-black/60 to-transparent hover:from-black/90 hover:via-black/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -442,6 +463,9 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   // Popular Carousel Pagination
   popularCurrentPage = 0;
   popularCarouselPages: number[] = [];
+  
+  // Filtro de categoria selecionada
+  selectedCategory: string = 'trending';
 
   constructor() {
   }
@@ -762,7 +786,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       mentorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
       category: 'tecnologia',
       duration: '8 horas',
-      thumbnail: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=1200&h=800&q=90'
+      thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&h=800&q=90'
     },
     {
       id: 24,
@@ -844,6 +868,168 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       category: 'marketing',
       duration: '8 horas',
       thumbnail: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 33,
+      title: 'Yoga e Meditação para Profissionais',
+      mentor: 'Camila Ferreira',
+      mentorImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+      category: 'saude',
+      duration: '6 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 34,
+      title: 'Nutrição e Bem-estar Corporativo',
+      mentor: 'Rafaela Mendes',
+      mentorImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+      category: 'saude',
+      duration: '5 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 35,
+      title: 'Gestão de Estresse e Produtividade',
+      mentor: 'Lucas Almeida',
+      mentorImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
+      category: 'saude',
+      duration: '4 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1528607929212-2636ec44253e?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 36,
+      title: 'Composição Musical Profissional',
+      mentor: 'Gabriel Santos',
+      mentorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      category: 'musica',
+      duration: '8 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 37,
+      title: 'Produção e Mixagem de Áudio',
+      mentor: 'Mariana Costa',
+      mentorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      category: 'musica',
+      duration: '10 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 38,
+      title: 'Performance e Apresentação ao Vivo',
+      mentor: 'Thiago Rocha',
+      mentorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+      category: 'musica',
+      duration: '7 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 39,
+      title: 'Treinamento de Alta Performance',
+      mentor: 'André Silva',
+      mentorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+      category: 'esportes',
+      duration: '6 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 40,
+      title: 'Mentalidade de Campeão',
+      mentor: 'Fernanda Oliveira',
+      mentorImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+      category: 'esportes',
+      duration: '5 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 41,
+      title: 'Nutrição Esportiva e Recuperação',
+      mentor: 'Roberto Lima',
+      mentorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+      category: 'esportes',
+      duration: '4 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 42,
+      title: 'Escrita Criativa e Narrativa',
+      mentor: 'Isabela Torres',
+      mentorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=400&fit=crop',
+      category: 'escrita',
+      duration: '8 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 43,
+      title: 'Roteiro e Storytelling',
+      mentor: 'Paulo Mendes',
+      mentorImage: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop',
+      category: 'escrita',
+      duration: '9 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 44,
+      title: 'Copywriting e Comunicação Persuasiva',
+      mentor: 'Juliana Rocha',
+      mentorImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+      category: 'escrita',
+      duration: '6 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 45,
+      title: 'Design Gráfico e Visual',
+      mentor: 'Ricardo Alves',
+      mentorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      category: 'design',
+      duration: '7 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d31294b2?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 46,
+      title: 'Branding e Identidade Visual',
+      mentor: 'Amanda Souza',
+      mentorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      category: 'design',
+      duration: '8 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d31294b2?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 47,
+      title: 'Técnicas Avançadas de Vendas',
+      mentor: 'Marcelo Costa',
+      mentorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+      category: 'vendas',
+      duration: '6 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 48,
+      title: 'Gestão de Relacionamento com Clientes',
+      mentor: 'Carla Ferreira',
+      mentorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+      category: 'vendas',
+      duration: '5 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 49,
+      title: 'Inovação e Transformação Digital',
+      mentor: 'Bruno Martins',
+      mentorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+      category: 'empreendedorismo',
+      duration: '9 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&h=800&q=90'
+    },
+    {
+      id: 50,
+      title: 'Finanças para Empreendedores',
+      mentor: 'Patricia Lima',
+      mentorImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+      category: 'empreendedorismo',
+      duration: '7 horas',
+      thumbnail: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&h=800&q=90'
     }
   ];
 
@@ -916,6 +1102,150 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       allEpisodes: false,
       seriesType: null,
       instructors: 'Com Professor Carlos Oliveira'
+    },
+    {
+      id: 2,
+      title: 'Empreendedorismo Digital',
+      mentor: 'Maria Santos',
+      mentorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 15 minutos',
+      category: 'empreendedorismo',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Maria Santos'
+    },
+    {
+      id: 5,
+      title: 'UI/UX Design Avançado',
+      mentor: 'Pedro Lima',
+      mentorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 30 minutos',
+      category: 'design',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Pedro Lima'
+    },
+    {
+      id: 6,
+      title: 'Vendas e Negociação',
+      mentor: 'Patricia Alves',
+      mentorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 10 minutos',
+      category: 'vendas',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Patricia Alves'
+    },
+    {
+      id: 10,
+      title: 'Desenvolvimento Full Stack',
+      mentor: 'Ana Costa',
+      mentorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop&q=95',
+      duration: '2 horas',
+      category: 'tecnologia',
+      isNew: false,
+      allEpisodes: true,
+      seriesType: 'SÉRIE ORIGINAL',
+      instructors: null
+    },
+    {
+      id: 11,
+      title: 'Design Thinking',
+      mentor: 'Pedro Lima',
+      mentorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 20 minutos',
+      category: 'design',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Pedro Lima'
+    },
+    {
+      id: 33,
+      title: 'Yoga e Meditação para Profissionais',
+      mentor: 'Camila Ferreira',
+      mentorImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 30 minutos',
+      category: 'saude',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Camila Ferreira'
+    },
+    {
+      id: 36,
+      title: 'Composição Musical Profissional',
+      mentor: 'Gabriel Santos',
+      mentorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&q=95',
+      duration: '2 horas',
+      category: 'musica',
+      isNew: false,
+      allEpisodes: true,
+      seriesType: 'SÉRIE ORIGINAL',
+      instructors: null
+    },
+    {
+      id: 39,
+      title: 'Treinamento de Alta Performance',
+      mentor: 'André Silva',
+      mentorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 45 minutos',
+      category: 'esportes',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com André Silva'
+    },
+    {
+      id: 42,
+      title: 'Escrita Criativa e Narrativa',
+      mentor: 'Isabela Torres',
+      mentorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=500&fit=crop&q=95',
+      duration: '2 horas 15 minutos',
+      category: 'escrita',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Isabela Torres'
+    },
+    {
+      id: 47,
+      title: 'Técnicas Avançadas de Vendas',
+      mentor: 'Marcelo Costa',
+      mentorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 30 minutos',
+      category: 'vendas',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Marcelo Costa'
+    },
+    {
+      id: 43,
+      title: 'Roteiro e Storytelling',
+      mentor: 'Paulo Mendes',
+      mentorImage: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=500&fit=crop&q=95',
+      duration: '2 horas 30 minutos',
+      category: 'escrita',
+      isNew: false,
+      allEpisodes: true,
+      seriesType: 'SÉRIE ORIGINAL',
+      instructors: null
+    },
+    {
+      id: 48,
+      title: 'Gestão de Relacionamento com Clientes',
+      mentor: 'Carla Ferreira',
+      mentorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop&q=95',
+      duration: '1 hora 20 minutos',
+      category: 'vendas',
+      isNew: true,
+      allEpisodes: false,
+      seriesType: null,
+      instructors: 'Com Carla Ferreira'
     }
   ];
 
@@ -994,7 +1324,8 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
         const itemWidth = 320; // Largura do item no desktop (md:w-[320px])
         const gap = 16; // space-x-4 = 16px
         const itemsPerPage = Math.floor((carouselWidth + gap) / (itemWidth + gap));
-        const totalPages = Math.ceil(this.popularMasterclasses.length / Math.max(itemsPerPage, 1));
+        const filteredItems = this.getFilteredPopularMasterclasses();
+        const totalPages = Math.ceil(filteredItems.length / Math.max(itemsPerPage, 1));
         this.popularCarouselPages = Array.from({ length: totalPages }, (_, i) => i);
       }
     }, 100);
@@ -1060,10 +1391,58 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
 
   filterByCategory(categoryId: string) {
-    // Navegar para a página de masterclasses com filtro
-    // Por enquanto, apenas console.log - pode ser implementado com roteamento
-    console.log('Filtrar por categoria:', categoryId);
-    // TODO: Implementar navegação para /masterclasses?category=categoryId
+    this.selectedCategory = categoryId;
+    this.popularCurrentPage = 0; // Resetar página do carrossel
+    // Recalcular páginas do carrossel após filtrar
+    setTimeout(() => {
+      this.calculatePopularCarouselPages();
+    }, 100);
+  }
+
+  getSectionTitle(): string {
+    if (this.selectedCategory === 'trending') {
+      return 'Em Alta';
+    }
+    const category = this.allCategories.find(c => c.id === this.selectedCategory);
+    return category ? category.name : 'Em Alta';
+  }
+
+  getTrendingSectionTitle(): string {
+    if (this.selectedCategory === 'trending') {
+      return 'Em Alta Agora';
+    }
+    const category = this.allCategories.find(c => c.id === this.selectedCategory);
+    return category ? `${category.name} - Destaques` : 'Em Alta Agora';
+  }
+
+  getSelectedCategoryName(): string {
+    const category = this.allCategories.find(c => c.id === this.selectedCategory);
+    return category ? category.name : 'Todas';
+  }
+
+  getFilteredPopularMasterclasses() {
+    if (this.selectedCategory === 'trending') {
+      return this.popularMasterclasses;
+    }
+    return this.popularMasterclasses.filter(m => m.category === this.selectedCategory);
+  }
+
+  getFilteredTrendingMasterclasses() {
+    if (this.selectedCategory === 'trending') {
+      return this.trendingMasterclasses;
+    }
+    return this.allMasterclasses.filter(m => m.category === this.selectedCategory).slice(0, 12);
+  }
+
+  getFilteredCategoryMasterclasses() {
+    if (this.selectedCategory === 'trending') {
+      return [];
+    }
+    return this.allMasterclasses.filter(m => m.category === this.selectedCategory).slice(0, 12);
+  }
+
+  shouldShowCategoryCarousels(): boolean {
+    return this.selectedCategory !== 'trending' && this.getFilteredCategoryMasterclasses().length > 0;
   }
 
   scrollCarousel(carouselId: string, direction: 'left' | 'right') {
@@ -1086,6 +1465,16 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
         behavior: 'smooth' 
       });
     }
+  }
+
+  handleThumbnailError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop&q=90';
+  }
+
+  handleMentorImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop';
   }
 
 }

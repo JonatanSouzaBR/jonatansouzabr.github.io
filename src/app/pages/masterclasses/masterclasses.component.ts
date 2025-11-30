@@ -18,7 +18,7 @@ interface Masterclass {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="min-h-screen bg-mc-black py-12">
+    <div class="min-h-screen bg-mc-black pt-24 pb-12">
       <div class="container mx-auto px-6">
         <div class="mb-12">
           <h1 class="font-mc-bold mb-4 tracking-wide font-mc text-mc-4xl text-mc-white">Masterclasses</h1>
@@ -30,10 +30,11 @@ interface Masterclass {
           <button 
             *ngFor="let category of categories" 
             (click)="filterByCategory(category)"
-            [class.bg-mc-white]="selectedCategory === category"
-            [class.text-mc-black]="selectedCategory === category"
-            [class.text-mc-white]="selectedCategory !== category"
-            class="px-6 py-2 rounded-mc-md border border-mc-gray-700 hover:border-mc-white transition-all small-font font-mc">
+            [ngClass]="{
+              'bg-mc-red text-mc-white border-mc-red': selectedCategory === category,
+              'bg-mc-gray-900 text-mc-white border-mc-gray-700': selectedCategory !== category
+            }"
+            class="px-6 py-2 rounded-mc-md border hover:border-mc-red transition-all small-font font-mc font-mc-semibold">
             {{ category }}
           </button>
         </div>
@@ -45,9 +46,10 @@ interface Masterclass {
             class="bg-mc-gray-900 rounded-mc-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-mc-slow cursor-pointer group"
             [routerLink]="['/masterclasses', masterclass.id]">
             <div class="aspect-video relative overflow-hidden">
-              <img [src]="masterclass.thumbnail" 
+              <img [src]="masterclass.thumbnail || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop&q=90'" 
                    [alt]="masterclass.title"
                    loading="lazy"
+                   (error)="handleImageError($event)"
                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
               <div class="absolute inset-0 bg-mc-black bg-opacity-40 flex items-center justify-center group-hover:bg-opacity-20 transition-all">
                 <svg class="w-20 h-20 text-mc-white opacity-70 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
@@ -63,6 +65,7 @@ interface Masterclass {
                 <img [src]="getMentorImage(masterclass.mentor)" 
                      [alt]="masterclass.mentor"
                      loading="lazy"
+                     (error)="handleMentorImageError($event)"
                      class="w-12 h-12 rounded-full object-cover mr-3 border-2 border-gray-700">
                 <p class="text-mc-text-tertiary mentor-name-font font-mc">{{ masterclass.mentor }}</p>
               </div>
@@ -150,7 +153,7 @@ export class MasterclassesComponent {
       price: 'R$ 359',
       duration: '7 horas',
       category: 'Tecnologia',
-      thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop'
+      thumbnail: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1200&h=800&fit=crop&q=90'
     }
   ];
 
@@ -172,9 +175,57 @@ export class MasterclassesComponent {
       'Carlos Oliveira': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
       'Ana Costa': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
       'Pedro Lima': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
-      'Fernanda Rocha': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop'
+      'Fernanda Rocha': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+      'Patricia Alves': 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=400&fit=crop',
+      'Roberto Mendes': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop',
+      'Lucas Pereira': 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
+      'Juliana Almeida': 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+      'Marcos Souza': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      'Carla Martins': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      'Ricardo Ferreira': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      'Beatriz Lima': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      'Felipe Costa': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+      'Renata Silva': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+      'Gustavo Rocha': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+      'Isabela Santos': 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=400&fit=crop',
+      'Thiago Alves': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      'Amanda Torres': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      'Bruno Mendes': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+      'Larissa Costa': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+      'Diego Oliveira': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+      'Mariana Rocha': 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=400&fit=crop',
+      'Rodrigo Silva': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      'Vanessa Lima': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      'Camila Ferreira': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+      'Rafaela Mendes': 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+      'Lucas Almeida': 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
+      'Gabriel Santos': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      'Mariana Costa': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      'Thiago Rocha': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+      'André Silva': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+      'Fernanda Oliveira': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
+      'Roberto Lima': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+      'Isabela Torres': 'https://images.unsplash.com/photo-1580489944761-15a19d654d0b?w=400&h=400&fit=crop',
+      'Paulo Mendes': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop',
+      'Juliana Rocha': 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+      'Ricardo Alves': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      'Amanda Souza': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+      'Marcelo Costa': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+      'Carla Ferreira': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+      'Bruno Martins': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+      'Patricia Lima': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop'
     };
     return mentorImages[mentorName] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop';
+  }
+
+  handleImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=800&fit=crop&q=90';
+  }
+
+  handleMentorImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop';
   }
 }
 

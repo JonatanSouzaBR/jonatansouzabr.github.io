@@ -1,7 +1,9 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CartService } from '../../services/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -14,10 +16,10 @@ import { FormsModule } from '@angular/forms';
         <div class="flex items-center justify-between h-16 md:h-20">
           <!-- Left Section: Logo + Browse -->
           <div class="flex items-center space-x-6 md:space-x-8 flex-shrink-0">
-            <!-- Logo - Estilo The Economist -->
-            <span class="logo-economist-style">
-              MentorMatch
-            </span>
+            <!-- Logo MentorMatch - Estilo Chanel Minimalista -->
+            <a routerLink="/" class="mentormatch-logo-chanel cursor-pointer">
+              <span class="logo-text-chanel">MentorMatch</span>
+            </a>
             
             <!-- Browse Button with Dropdown -->
             <div class="relative group hidden md:block">
@@ -90,24 +92,27 @@ import { FormsModule } from '@angular/forms';
 
           <!-- Right Section: Links + CTA Button -->
           <div class="flex items-center space-x-4 md:space-x-6 flex-shrink-0">
+            <!-- Wishlist Icon -->
+            <a routerLink="/lista-desejos" class="relative text-mc-white hover:text-mc-gray-300 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+              <span *ngIf="wishlistCount > 0" class="absolute -top-2 -right-2 bg-mc-red text-mc-white text-xs font-mc-bold rounded-full w-5 h-5 flex items-center justify-center">{{ wishlistCount }}</span>
+            </a>
+
+            <!-- Cart Icon -->
+            <a routerLink="/carrinho" class="relative text-mc-white hover:text-mc-gray-300 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              <span *ngIf="cartCount > 0" class="absolute -top-2 -right-2 bg-mc-red text-mc-white text-xs font-mc-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cartCount }}</span>
+            </a>
+
             <!-- Mobile Search Icon -->
             <button (click)="toggleMobileSearch()" class="md:hidden text-mc-white hover:text-mc-gray-300 transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
-            </button>
-
-            <!-- Navigation Links -->
-            <div class="hidden lg:flex items-center space-x-6">
-              <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Para Empresas</a>
-              <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Presentes</a>
-              <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Ver Planos</a>
-              <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Entrar</a>
-            </div>
-
-            <!-- CTA Button -->
-            <button class="bg-mc-red hover:bg-mc-button-primary-hover text-mc-white px-4 md:px-6 py-2 md:py-2.5 rounded-mc-md text-mc-sm transition-colors whitespace-nowrap font-mc font-mc-semibold">
-              <span class="font-mc">Obter</span>&nbsp;<span class="font-logo font-mc-bold" style="text-transform: none;">MentorMatch</span>
             </button>
 
             <!-- Mobile Menu -->
@@ -118,6 +123,19 @@ import { FormsModule } from '@angular/forms';
               <svg *ngIf="showMobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
+            </button>
+
+            <!-- Navigation Links (Desktop) -->
+            <div class="hidden lg:flex items-center space-x-6">
+              <a routerLink="/empresas" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Para Empresas</a>
+              <a routerLink="/presentes" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Presentes</a>
+              <a routerLink="/planos" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Ver Planos</a>
+              <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm">Entrar</a>
+            </div>
+
+            <!-- CTA Button (Desktop only) -->
+            <button class="hidden md:flex bg-mc-red hover:bg-mc-button-primary-hover text-mc-white px-4 md:px-6 py-2 md:py-2.5 rounded-mc-md text-mc-sm transition-colors whitespace-nowrap font-mc font-mc-semibold">
+              <span class="font-mc">Obter</span>&nbsp;<span class="logo-text-chanel-small font-mc-bold">MentorMatch</span>
             </button>
           </div>
         </div>
@@ -139,9 +157,9 @@ import { FormsModule } from '@angular/forms';
         <div *ngIf="showMobileMenu" class="md:hidden pb-4 border-t border-mc-gray-800 mt-4 pt-4">
           <div class="flex flex-col space-y-3">
             <a routerLink="/masterclasses" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Browse</a>
-            <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Para Empresas</a>
-            <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Presentes</a>
-            <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Ver Planos</a>
+            <a routerLink="/empresas" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Para Empresas</a>
+            <a routerLink="/presentes" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Presentes</a>
+            <a routerLink="/planos" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Ver Planos</a>
             <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm py-2">Entrar</a>
           </div>
         </div>
@@ -152,13 +170,36 @@ import { FormsModule } from '@angular/forms';
     /* Click outside to close dropdowns */
   `]
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   isScrolled = false;
   showBrowseMenu = false;
   showSearchDropdown = false;
   showMobileSearch = false;
   showMobileMenu = false;
   searchQuery = '';
+  cartCount = 0;
+  wishlistCount = 0;
+  private subscriptions = new Subscription();
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit() {
+    this.subscriptions.add(
+      this.cartService.cart$.subscribe(items => {
+        this.cartCount = items.length;
+      })
+    );
+    
+    this.subscriptions.add(
+      this.cartService.wishlist$.subscribe(items => {
+        this.wishlistCount = items.length;
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
   browseCategories = [
     { id: 'lideranca', name: 'Liderança & Gestão' },
