@@ -15,6 +15,9 @@ fs.writeFileSync(nojekyllPath, '', 'utf8');
 console.log('✓ Arquivo .nojekyll criado em:', nojekyllPath);
 
 // Também criar o 404.html se o index.html existir
+// Para SPAs no GitHub Pages, o 404.html deve ter o mesmo conteúdo do index.html
+// O GitHub Pages servirá o 404.html quando uma rota não for encontrada,
+// e o Angular Router cuidará do roteamento
 const indexPath = path.join(targetPath, 'index.html');
 const error404Path = path.join(targetPath, '404.html');
 
@@ -22,5 +25,6 @@ if (fs.existsSync(indexPath)) {
   const indexContent = fs.readFileSync(indexPath, 'utf8');
   fs.writeFileSync(error404Path, indexContent, 'utf8');
   console.log('✓ Arquivo 404.html criado em:', error404Path);
+  console.log('  (Necessário para SPAs Angular no GitHub Pages)');
 }
 
