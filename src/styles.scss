@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-// Importar Design Tokens MasterClass
+// Importar Design Tokens Netflix Style
 @import './styles/design-tokens';
 
 * {
@@ -11,8 +11,7 @@
   box-sizing: border-box;
 }
 
-// Tipografia MasterClass - Fontes exatas do site oficial
-// Fontes: Sohne, Helvetica, Arial, sans-serif (na sequência exata)
+// Base Netflix Typography
 
 body {
   background-color: $mc-bg-primary;
@@ -22,71 +21,68 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-smooth: always;
   font-weight: $mc-font-weight-regular;
-  letter-spacing: $mc-letter-spacing-wide;
-  font-size: $mc-font-size-base; // Base: 16px (Masterclass padrão)
-  line-height: $mc-line-height-loose;
+  letter-spacing: $mc-letter-spacing-normal;
+  font-size: $mc-font-size-base;
+  line-height: $mc-line-height-normal;
   overflow-x: hidden;
+  background-color: $mc-bg-primary;
+}
+
+html, body, app-root {
+  min-height: 100%;
+  background-color: $mc-bg-primary !important;
 }
 
 // ============================================
-// VARIAÇÕES DE TÍTULOS (MasterClass Style)
-// Tamanhos baseados no padrão Masterclass.com
+// VARIAÇÕES DE TÍTULOS (Netflix Style)
 // ============================================
 
-// Hero Title - Título principal grande (32-36px base, maior em hero)
 h1 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-bold;
-  font-size: clamp(2rem, 5vw, 2.25rem); // 32px - 36px (Masterclass padrão)
-  letter-spacing: $mc-letter-spacing-widest;
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  letter-spacing: $mc-letter-spacing-normal;
   line-height: $mc-line-height-tight;
-  text-transform: none; // Masterclass não usa uppercase em todos os títulos
   color: $mc-text-primary;
 }
 
-// Section Titles - Títulos de seção (24-28px)
 h2 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-bold;
-  font-size: clamp(1.5rem, 3vw, 1.75rem); // 24px - 28px (Masterclass padrão)
-  letter-spacing: $mc-letter-spacing-wider;
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  letter-spacing: $mc-letter-spacing-normal;
   line-height: $mc-line-height-snug;
-  text-transform: none;
   color: $mc-text-primary;
 }
 
-// Card Titles / Subsection Titles (18-22px)
 h3 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-semibold;
-  font-size: clamp(1.125rem, 2vw, 1.375rem); // 18px - 22px (Masterclass padrão)
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
   letter-spacing: $mc-letter-spacing-normal;
   line-height: $mc-line-height-normal;
-  text-transform: none;
   color: $mc-text-primary;
 }
 
-// Small Headings (16-18px)
 h4, h5, h6 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-semibold;
-  font-size: clamp(1rem, 1.5vw, 1.125rem); // 16px - 18px (Masterclass padrão)
-  letter-spacing: $mc-letter-spacing-wide;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  letter-spacing: $mc-letter-spacing-normal;
   line-height: $mc-line-height-relaxed;
-  text-transform: none;
   color: $mc-text-primary;
 }
 
 // ============================================
-// CLASSES UTILITÁRIAS MASTERCLASS
+// CLASSES UTILITÁRIAS NETFLIX
 // ============================================
 
 // Display Font - Para títulos hero muito grandes
 .display-font {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-bold;
-  letter-spacing: $mc-letter-spacing-widest;
-  text-transform: uppercase;
+  letter-spacing: $mc-letter-spacing-normal;
+  text-transform: none;
   line-height: $mc-line-height-tight;
   color: $mc-text-primary;
 }
@@ -115,9 +111,9 @@ h4, h5, h6 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-regular;
   font-size: $mc-font-size-base; // 16px
-  letter-spacing: $mc-letter-spacing-wide;
+  letter-spacing: $mc-letter-spacing-normal;
   text-transform: none;
-  line-height: $mc-line-height-loose;
+  line-height: $mc-line-height-normal;
   color: $mc-text-primary;
 }
 
@@ -126,7 +122,7 @@ h4, h5, h6 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-regular;
   font-size: $mc-font-size-sm; // 14px
-  letter-spacing: $mc-letter-spacing-wide;
+  letter-spacing: $mc-letter-spacing-normal;
   text-transform: none;
   line-height: $mc-line-height-loose;
   color: $mc-text-secondary;
@@ -147,9 +143,9 @@ h4, h5, h6 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-regular;
   font-size: $mc-font-size-sm; // 14px
-  letter-spacing: $mc-letter-spacing-wide;
+  letter-spacing: $mc-letter-spacing-normal;
   text-transform: none;
-  line-height: $mc-line-height-loose;
+  line-height: $mc-line-height-normal;
   color: $mc-text-secondary;
 }
 
@@ -168,9 +164,9 @@ h4, h5, h6 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-regular;
   font-size: $mc-font-size-base; // 16px
-  letter-spacing: $mc-letter-spacing-wide;
+  letter-spacing: $mc-letter-spacing-normal;
   text-transform: none;
-  line-height: $mc-line-height-loose;
+  line-height: $mc-line-height-normal;
   color: $mc-text-primary;
 }
 
@@ -179,7 +175,7 @@ h4, h5, h6 {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-bold;
   font-size: $mc-font-size-xl; // 24px
-  letter-spacing: $mc-letter-spacing-wide;
+  letter-spacing: $mc-letter-spacing-normal;
   text-transform: none;
   line-height: $mc-line-height-snug;
   color: $mc-text-primary;
@@ -190,8 +186,8 @@ p {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-regular;
   font-size: $mc-font-size-base; // 16px
-  letter-spacing: $mc-letter-spacing-wide;
-  line-height: $mc-line-height-loose;
+  letter-spacing: $mc-letter-spacing-normal;
+  line-height: $mc-line-height-normal;
   color: $mc-text-primary;
 }
 
@@ -200,8 +196,8 @@ p.small, small {
   font-family: $mc-font-family-primary;
   font-weight: $mc-font-weight-regular;
   font-size: $mc-font-size-sm; // 14px
-  letter-spacing: $mc-letter-spacing-wide;
-  line-height: $mc-line-height-loose;
+  letter-spacing: $mc-letter-spacing-normal;
+  line-height: $mc-line-height-normal;
   color: $mc-text-secondary;
 }
 
@@ -285,13 +281,13 @@ img {
 
 // Cards MasterClass
 .mc-card {
-  background-color: $mc-bg-secondary;
+  background-color: $mc-panel;
   border-radius: $mc-radius-lg;
   overflow: hidden;
   transition: transform $mc-transition-slow, box-shadow $mc-transition-slow;
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.02);
     box-shadow: $mc-shadow-lg;
   }
 }
@@ -320,6 +316,256 @@ img {
 
 .bg-mc-tertiary {
   background-color: $mc-bg-tertiary;
+}
+
+.netflix-card {
+  position: relative;
+  border-radius: $mc-radius-lg;
+  background-color: $mc-panel;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
+  box-shadow: $mc-shadow-md;
+  transform-origin: center center;
+  will-change: transform, box-shadow;
+
+  &:hover {
+    transform: translateY(-18px) scale(1.12);
+    box-shadow: $mc-shadow-2xl;
+    z-index: 30;
+  }
+}
+
+.netflix-row-gradient {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.8) 100%);
+  opacity: 0;
+  transition: opacity $mc-transition-slow;
+}
+
+.netflix-card:hover .card-overlay {
+  opacity: 1;
+}
+
+.card-info-base {
+  transition: opacity $mc-transition-base;
+}
+
+.netflix-card:hover .card-info-base {
+  opacity: 0;
+}
+
+.card-hover-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0) 20%, rgba(5, 5, 5, 0.95) 100%);
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition: opacity $mc-transition-slow, transform $mc-transition-slow;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.netflix-card:hover .card-hover-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.card-hover-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.card-hover-meta .match-score {
+  color: $mc-success;
+  font-weight: $mc-font-weight-semibold;
+  letter-spacing: 0;
+}
+
+.card-hover-title {
+  font-size: 1rem;
+  font-weight: $mc-font-weight-bold;
+  margin: 0.25rem 0 0.4rem;
+}
+
+.card-hover-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.card-hover-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: $mc-white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $mc-transition-fast, background-color $mc-transition-fast, border-color $mc-transition-fast;
+}
+
+.card-hover-btn.primary {
+  width: 40px;
+  height: 40px;
+  background-color: $mc-white;
+  color: $mc-black;
+  border-color: $mc-white;
+}
+
+.card-hover-btn:hover {
+  transform: scale(1.05);
+  border-color: $mc-white;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-hover-btn.primary:hover {
+  background-color: $mc-gray-100;
+  color: $mc-black;
+}
+
+.card-hover-progress {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0.35rem;
+}
+
+.card-hover-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.card-hover-tags span {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: $mc-breakpoint-md) {
+  .netflix-card:hover {
+    transform: translateY(0) scale(1);
+    box-shadow: $mc-shadow-md;
+  }
+
+  .card-hover-panel {
+    display: none;
+  }
+
+  .card-info-base {
+    opacity: 1 !important;
+  }
+}
+
+.card-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: $mc-black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity $mc-transition-base;
+}
+
+.netflix-card:hover .card-play {
+  opacity: 1;
+}
+
+.card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity $mc-transition-base;
+}
+
+.card-actions button {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: $mc-white;
+}
+
+.netflix-card:hover .card-actions {
+  opacity: 1;
+}
+
+.netflix-rank-outline {
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.08);
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.35);
+}
+
+.progress-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: $mc-white;
+}
+
+.netflix-badge {
+  @extend .text-xs;
+  background-color: $mc-red;
+  color: $mc-white;
+  font-weight: $mc-font-weight-bold;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border-radius: $mc-radius-sm;
+  letter-spacing: $mc-letter-spacing-wide;
+}
+
+.netflix-top10-number {
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.08);
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.18);
+  position: absolute;
+  left: -8px;
+  bottom: 8px;
+  pointer-events: none;
 }
 
 // Logo Font - Fonte serifada estilo The Economist (autoritária e robusta)

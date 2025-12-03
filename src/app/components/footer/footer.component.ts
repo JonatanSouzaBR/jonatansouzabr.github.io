@@ -16,7 +16,7 @@ import { RouterLink } from '@angular/router';
               </a>
             </div>
             <p class="text-mc-text-tertiary body-font mb-4 font-mc text-mc-sm">
-              Conectando mentores e mentorados através de conhecimento de qualidade.
+              Treinamentos gravados em mentorias, trilhas práticas e conteúdos para cada momento da jornada.
             </p>
             <div class="flex space-x-4">
               <a href="#" class="text-mc-text-tertiary hover:text-mc-white transition-colors">
@@ -40,36 +40,36 @@ import { RouterLink } from '@angular/router';
           <div>
             <h4 class="font-mc-semibold text-mc-white mb-4 uppercase tracking-wide font-mc text-mc-sm">Aprender</h4>
             <ul class="space-y-2 text-mc-text-tertiary body-font font-mc text-mc-sm">
-              <li><a routerLink="/masterclasses" class="hover:text-mc-white transition-colors">Masterclasses</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Categorias</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Instrutores</a></li>
+              <li><a routerLink="/masterclasses" class="hover:text-mc-white transition-colors">Mentorias gravadas</a></li>
+              <li><a routerLink="/planos" class="hover:text-mc-white transition-colors">Trilhas e planos</a></li>
+              <li><a routerLink="/mentor/dashboard" class="hover:text-mc-white transition-colors">Mentores</a></li>
             </ul>
           </div>
           
           <div>
             <h4 class="text-mc-sm font-mc-semibold text-mc-white mb-4 uppercase tracking-wide font-mc">Empresa</h4>
             <ul class="space-y-2 text-mc-text-tertiary text-mc-sm body-font font-mc">
-              <li><a href="#" class="hover:text-mc-white transition-colors">Sobre</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Carreiras</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Imprensa</a></li>
+              <li><a routerLink="/empresas" class="hover:text-mc-white transition-colors">Para empresas</a></li>
+              <li><a routerLink="/presentes" class="hover:text-mc-white transition-colors">Presentes corporativos</a></li>
+              <li><a routerLink="/planos" class="hover:text-mc-white transition-colors">Assinaturas anuais</a></li>
             </ul>
           </div>
           
           <div>
             <h4 class="text-mc-sm font-mc-semibold text-mc-white mb-4 uppercase tracking-wide font-mc">Comunidade</h4>
             <ul class="space-y-2 text-mc-text-tertiary text-mc-sm body-font font-mc">
-              <li><a href="#" class="hover:text-mc-white transition-colors">Blog</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Eventos</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Parceiros</a></li>
+              <li><a [routerLink]="['/']" [fragment]="'temas'" class="hover:text-mc-white transition-colors">Temas em alta</a></li>
+              <li><a [routerLink]="['/']" [fragment]="'trilhas'" class="hover:text-mc-white transition-colors">Trilhas recomendadas</a></li>
+              <li><a routerLink="/masterclasses" class="hover:text-mc-white transition-colors">Novos conteúdos</a></li>
             </ul>
           </div>
           
           <div>
             <h4 class="text-mc-sm font-mc-semibold text-mc-white mb-4 uppercase tracking-wide font-mc">Suporte</h4>
             <ul class="space-y-2 text-mc-text-tertiary text-mc-sm body-font font-mc">
-              <li><a href="#" class="hover:text-mc-white transition-colors">Central de Ajuda</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Contato</a></li>
-              <li><a href="#" class="hover:text-mc-white transition-colors">Termos</a></li>
+              <li><a routerLink="/planos" class="hover:text-mc-white transition-colors">FAQ e suportes</a></li>
+              <li><a routerLink="/carrinho" class="hover:text-mc-white transition-colors">Carrinho</a></li>
+              <li><a routerLink="/checkout" class="hover:text-mc-white transition-colors">Checkout seguro</a></li>
             </ul>
           </div>
         </div>

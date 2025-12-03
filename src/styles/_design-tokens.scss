@@ -1,16 +1,20 @@
 // ============================================
-// MASTERCLASS DESIGN SYSTEM TOKENS
-// Baseado no site oficial masterclass.com
+// MENTORMATCH x NETFLIX DESIGN TOKENS
+// Inspirado na interface do Netflix (netflix.com/browse)
 // ============================================
 
 // ============================================
 // CORES
 // ============================================
 
-// Cores Primárias
+// Cores Primárias Netflix Minimalista
 $mc-black: #000000;
+$mc-night: #000000;
+$mc-panel: #050505;
 $mc-white: #FFFFFF;
-$mc-red: #DC2626; // Vermelho MasterClass (accent/CTA)
+$mc-red: #E50914; // Netflix Red
+$mc-red-hover: #F40612;
+$mc-success: #46D369; // Netflix match score green
 
 // Cores Neutras (Grayscale)
 $mc-gray-50: #FAFAFA;
@@ -27,39 +31,39 @@ $mc-gray-950: #0A0A0A;
 
 // Cores de Texto
 $mc-text-primary: $mc-white;
-$mc-text-secondary: rgba(255, 255, 255, 0.8);
+$mc-text-secondary: rgba(255, 255, 255, 0.78);
 $mc-text-tertiary: rgba(255, 255, 255, 0.6);
-$mc-text-disabled: rgba(255, 255, 255, 0.4);
+$mc-text-disabled: rgba(255, 255, 255, 0.38);
 
 // Cores de Background
-$mc-bg-primary: $mc-black;
-$mc-bg-secondary: $mc-gray-900;
-$mc-bg-tertiary: $mc-gray-800;
+$mc-bg-primary: $mc-night;
+$mc-bg-secondary: $mc-panel;
+$mc-bg-tertiary: #0B0B0B;
 
 // Cores de Estado
-$mc-hover-overlay: rgba(0, 0, 0, 0.4);
-$mc-active-overlay: rgba(0, 0, 0, 0.6);
-$mc-border-color: rgba(255, 255, 255, 0.1);
-$mc-border-hover: rgba(255, 255, 255, 0.3);
+$mc-hover-overlay: rgba(20, 20, 20, 0.6);
+$mc-active-overlay: rgba(0, 0, 0, 0.75);
+$mc-border-color: rgba(255, 255, 255, 0.12);
+$mc-border-hover: rgba(255, 255, 255, 0.32);
 
 // Cores de Botões
 $mc-button-primary-bg: $mc-red;
-$mc-button-primary-hover: #B91C1C;
+$mc-button-primary-hover: $mc-red-hover;
 $mc-button-primary-text: $mc-white;
-$mc-button-secondary-bg: transparent;
-$mc-button-secondary-border: $mc-white;
-$mc-button-secondary-hover: $mc-white;
+$mc-button-secondary-bg: rgba(109, 109, 110, 0.7);
+$mc-button-secondary-border: transparent;
+$mc-button-secondary-hover: rgba(109, 109, 110, 0.9);
 $mc-button-secondary-text: $mc-white;
-$mc-button-secondary-text-hover: $mc-black;
+$mc-button-secondary-text-hover: $mc-white;
 
 // ============================================
 // TIPOGRAFIA
 // ============================================
 
-// Família de Fontes
-$mc-font-family-primary: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-$mc-font-family-display: 'Sohne', 'Helvetica', 'Arial', sans-serif;
-$mc-font-family-body: 'Sohne', 'Helvetica', 'Arial', sans-serif;
+// Família de Fontes (Netflix Sans -> Inter fallback)
+$mc-font-family-primary: 'Inter', 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$mc-font-family-display: 'Inter', 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$mc-font-family-body: 'Inter', 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $mc-font-family-logo: 'Crimson Text', 'Lora', 'Times New Roman', 'Times', 'Georgia', serif;
 
 // Pesos de Fonte
@@ -92,9 +96,9 @@ $mc-line-height-loose: 1.5;
 $mc-letter-spacing-tighter: -0.05em;
 $mc-letter-spacing-tight: -0.025em;
 $mc-letter-spacing-normal: 0;
-$mc-letter-spacing-wide: 0.02em;
-$mc-letter-spacing-wider: 0.04em;
-$mc-letter-spacing-widest: 0.05em;
+$mc-letter-spacing-wide: 0.01em;
+$mc-letter-spacing-wider: 0.02em;
+$mc-letter-spacing-widest: 0.03em;
 
 // ============================================
 // ESPAÇAMENTOS
@@ -130,11 +134,11 @@ $mc-radius-full: 9999px;
 // SHADOWS
 // ============================================
 
-$mc-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-$mc-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-$mc-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-$mc-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-$mc-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+$mc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+$mc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+$mc-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+$mc-shadow-xl: 0 14px 32px rgba(0, 0, 0, 0.45);
+$mc-shadow-2xl: 0 18px 40px rgba(0, 0, 0, 0.5);
 
 // ============================================
 // BREAKPOINTS

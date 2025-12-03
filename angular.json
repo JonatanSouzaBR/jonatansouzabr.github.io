@@ -53,8 +53,7 @@
               "baseHref": "/"
             },
             "github-pages": {
-              "outputPath": "dist/mentormatch",
-              "baseHref": "/mentormatch.github.io/",
+              "baseHref": "/",
               "outputHashing": "all",
               "optimization": true,
               "sourceMap": false,

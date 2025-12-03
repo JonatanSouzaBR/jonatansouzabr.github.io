@@ -12,7 +12,7 @@ import { ModalComponent } from './components/modal/modal.component';
   template: `
     <div class="min-h-screen flex flex-col">
       <app-header></app-header>
-      <main class="flex-grow">
+      <main class="flex-grow pt-16 md:pt-20 lg:pt-24">
         <router-outlet></router-outlet>
       </main>
       <app-footer></app-footer>
