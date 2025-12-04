@@ -5,6 +5,20 @@ import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { Subscription } from 'rxjs';
 
+interface AiAttachment {
+  id: string;
+  name: string;
+  sizeLabel: string;
+  source: File;
+}
+
+interface AiResponseEntry {
+  prompt: string;
+  attachments: number;
+  answer: string;
+  timestamp: Date;
+}
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -114,13 +128,6 @@ import { Subscription } from 'rxjs';
           <div class="ai-panel">
             <div class="ai-panel__header">
               <div class="ai-panel__identity">
-                <div class="ai-panel__avatar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 20l9-9"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l1.5-1.5M16 10l1.5-1.5M17 6l1-1M14 12l1-1"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 21l3-1-2-2-1 3z"/>
-                  </svg>
-                </div>
                 <div>
                   <p class="ai-panel__title">Mentor<span class="ai-panel__title-highlight">AI</span> Assistente</p>
                   <p class="ai-panel__status">Disponível para montar mentorias sob medida</p>
@@ -135,26 +142,50 @@ import { Subscription } from 'rxjs';
             </div>
 
             <div class="ai-panel__input">
+              <input type="file" multiple class="hidden" #attachmentInput (change)="handleAttachmentSelection($event)">
               <div class="ai-panel__input-wrapper">
                 <textarea rows="2"
                           [(ngModel)]="searchQuery"
                           placeholder="Pergunte algo como “Preciso de uma trilha para novos líderes de produto”"
                           class="ai-panel__textarea"></textarea>
                 <div class="ai-panel__input-actions">
-                  <button class="ai-panel__ghost-btn" title="Inserir arquivos">
+                  <button class="ai-panel__ghost-btn" title="Inserir arquivos" type="button" (click)="triggerAttachmentPicker(attachmentInput)">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L18 9.828"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 5l3 3m-6-6h6v6"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8v8a5 5 0 11-10 0V7a3 3 0 016 0v8a1 1 0 01-2 0V8"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 19a3 3 0 11-6 0v-7a5 5 0 0110 0"/>
                     </svg>
                   </button>
-                  <button class="ai-panel__ghost-btn" title="Sugerir tópicos">
+                  <button 
+                    class="ai-panel__ghost-btn"
+                    [ngClass]="{'ai-panel__ghost-btn--recording': isTranscribing}"
+                    title="Transcrever fala"
+                    type="button"
+                    (click)="toggleTranscription()"
+                    [attr.aria-pressed]="isTranscribing">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3a3 3 0 00-3 3v5a3 3 0 006 0V6a3 3 0 00-3-3z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-14 0"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v4m-3 0h6"/>
                     </svg>
                   </button>
-                  <button class="ai-panel__send" title="Enviar">
+                  <button class="ai-panel__send" title="Enviar" type="button" (click)="submitAiRequest()" [disabled]="isSending">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M2.01 21l20.99-9L2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="aiAttachments.length" class="ai-panel__attachments">
+                <div *ngFor="let attachment of aiAttachments" class="ai-attachment-card">
+                  <div class="ai-attachment-card__info">
+                    <p class="ai-attachment-card__name">{{ attachment.name }}</p>
+                    <span class="ai-attachment-card__meta">
+                      {{ attachment.sizeLabel }} • Arquivo
+                    </span>
+                  </div>
+                  <button class="ai-attachment-card__remove" (click)="removeAttachment(attachment.id)" type="button" aria-label="Remover anexo">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                   </button>
                 </div>
@@ -173,6 +204,17 @@ import { Subscription } from 'rxjs';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
                 </button>
+              </div>
+            </div>
+
+            <p *ngIf="aiStatusMessage" class="ai-panel__status-text">{{ aiStatusMessage }}</p>
+
+            <div *ngIf="aiResponses.length" class="ai-panel__responses">
+              <p class="ai-panel__section-label">Últimas respostas</p>
+              <div class="ai-panel__response-card" *ngFor="let response of aiResponses | slice:0:1">
+                <p class="ai-response__question">{{ response.prompt || 'Envio com anexos' }}</p>
+                <p class="ai-response__answer">{{ response.answer }}</p>
+                <span class="ai-response__meta">{{ response.timestamp | date:'HH:mm' }} · {{ response.attachments }} anexos</span>
               </div>
             </div>
 
@@ -298,6 +340,11 @@ import { Subscription } from 'rxjs';
       justify-content: center;
       color: rgba(255,255,255,0.8);
     }
+    .ai-panel__ghost-btn--recording {
+      border-color: #E50914;
+      color: #E50914;
+      box-shadow: 0 0 0 4px rgba(229,9,20,0.15);
+    }
     .ai-panel__send {
       width: 40px;
       height: 36px;
@@ -307,6 +354,10 @@ import { Subscription } from 'rxjs';
       display: inline-flex;
       align-items: center;
       justify-content: center;
+    }
+    .ai-panel__send[disabled] {
+      opacity: 0.7;
+      cursor: not-allowed;
     }
     .ai-panel__chips {
       display: flex;
@@ -340,6 +391,77 @@ import { Subscription } from 'rxjs';
       color: #fff;
       background: rgba(255,255,255,0.02);
     }
+    .ai-panel__attachments {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .ai-attachment-card {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .ai-attachment-card__info {
+      flex: 1;
+      min-width: 0;
+    }
+    .ai-attachment-card__name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0 0 0.15rem;
+    }
+    .ai-attachment-card__meta {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .ai-attachment-card__remove {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255,255,255,0.8);
+      background: transparent;
+    }
+    .ai-panel__status-text {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.85);
+    }
+    .ai-panel__responses {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .ai-panel__response-card {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.02);
+    }
+    .ai-response__question {
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+    }
+    .ai-response__answer {
+      margin: 0;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .ai-response__meta {
+      display: inline-block;
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+    }
     @media (max-width: 768px) {
       .ai-panel {
         padding: 1rem;
@@ -361,9 +483,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   wishlistCount = 0;
   activeNav = 'home';
   private subscriptions = new Subscription();
+  aiAttachments: AiAttachment[] = [];
+  aiResponses: AiResponseEntry[] = [];
+  isTranscribing = false;
+  isSending = false;
+  aiStatusMessage = '';
+  private speechRecognition?: any;
+  private transcriptionBaseText = '';
 
   navLinks = [
-    { id: 'masterclasses', label: 'Categorias', route: '/masterclasses' },
+    { id: 'masterclasses', label: 'Masterclasses', route: '/masterclasses' },
     { id: 'planos', label: 'Planos', route: '/planos' },
     { id: 'empresas', label: 'Empresas', route: '/empresas' },
     { id: 'presentes', label: 'Presentes', route: '/presentes' },
@@ -396,6 +525,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+    this.stopTranscription(true);
+    this.clearAttachments();
   }
 
   popularSearches = [
@@ -456,6 +587,200 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.searchQuery = search;
     this.showSearchDropdown = false;
     // Navigate to search results or perform search
+  }
+
+  triggerAttachmentPicker(input: HTMLInputElement) {
+    input.click();
+  }
+
+  handleAttachmentSelection(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files?.length) {
+      return;
+    }
+    Array.from(target.files).forEach(file => this.addAttachmentFromFile(file));
+    target.value = '';
+  }
+
+  removeAttachment(attachmentId: string) {
+    this.aiAttachments = this.aiAttachments.filter(item => item.id !== attachmentId);
+    this.aiStatusMessage = this.aiAttachments.length
+      ? `${this.aiAttachments.length} anexo(s) restantes.`
+      : 'Todos os anexos foram removidos.';
+  }
+
+  async toggleTranscription() {
+    if (this.isTranscribing) {
+      this.stopTranscription();
+      return;
+    }
+    if (!this.ensureSpeechRecognition()) {
+      this.aiStatusMessage = 'Seu navegador não suporta transcrição de voz.';
+      return;
+    }
+    this.startTranscription();
+  }
+
+  submitAiRequest() {
+    const trimmedQuery = this.searchQuery.trim();
+    if (!trimmedQuery && this.aiAttachments.length === 0) {
+      this.aiStatusMessage = 'Escreva uma pergunta ou adicione anexos antes de enviar.';
+      return;
+    }
+
+    const attachmentsSnapshot = [...this.aiAttachments];
+    const promptSnapshot = trimmedQuery;
+
+    this.isSending = true;
+    this.aiStatusMessage = 'MentorAI está analisando sua solicitação...';
+
+    setTimeout(() => {
+      const responseEntry: AiResponseEntry = {
+        prompt: promptSnapshot,
+        attachments: attachmentsSnapshot.length,
+        answer: this.buildAiResponseText(promptSnapshot, attachmentsSnapshot.length),
+        timestamp: new Date()
+      };
+      this.aiResponses = [responseEntry, ...this.aiResponses].slice(0, 3);
+      this.aiStatusMessage = 'MentorAI enviou recomendações personalizadas.';
+      this.resetAiForm();
+      this.isSending = false;
+    }, 1200);
+  }
+
+  private addAttachmentFromFile(file: File) {
+    const attachment: AiAttachment = {
+      id: this.generateAttachmentId(),
+      name: file.name,
+      sizeLabel: this.formatBytes(file.size),
+      source: file
+    };
+    this.aiAttachments = [attachment, ...this.aiAttachments];
+    this.aiStatusMessage = `${this.aiAttachments.length} anexo(s) pronto(s) para envio.`;
+  }
+
+  private ensureSpeechRecognition(): boolean {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      return false;
+    }
+    if (!this.speechRecognition) {
+      this.speechRecognition = new SpeechRecognition();
+      this.speechRecognition.lang = 'pt-BR';
+      this.speechRecognition.interimResults = true;
+      this.speechRecognition.continuous = true;
+      this.speechRecognition.onresult = (event: any) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          const transcript = result[0]?.transcript?.trim?.() ?? '';
+          if (!transcript) {
+            continue;
+          }
+          if (result.isFinal) {
+            finalTranscript += `${transcript} `;
+          } else {
+            interimTranscript += `${transcript} `;
+          }
+        }
+
+        if (finalTranscript.trim()) {
+          this.transcriptionBaseText = [this.transcriptionBaseText, finalTranscript.trim()]
+            .filter(Boolean)
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        }
+
+        const composed = [this.transcriptionBaseText, interimTranscript.trim()]
+          .filter(Boolean)
+          .join(' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        if (composed) {
+          this.searchQuery = composed;
+        }
+
+        this.aiStatusMessage = interimTranscript.trim()
+          ? 'Transcrevendo em tempo real...'
+          : 'Transcrição atualizada.';
+      };
+      this.speechRecognition.onerror = () => {
+        this.aiStatusMessage = 'Ocorreu um erro durante a transcrição.';
+        this.stopTranscription(true);
+      };
+      this.speechRecognition.onend = () => {
+        if (this.isTranscribing) {
+          this.stopTranscription(true);
+        }
+      };
+    }
+    return true;
+  }
+
+  private startTranscription() {
+    if (this.isSending) {
+      this.aiStatusMessage = 'Conclua o envio atual antes de transcrever novamente.';
+      return;
+    }
+    this.isTranscribing = true;
+    this.transcriptionBaseText = this.searchQuery.trim();
+    this.aiStatusMessage = 'Transcrevendo... fale próximo ao microfone.';
+    this.speechRecognition?.start();
+  }
+
+  private stopTranscription(forceMessage = false) {
+    if (this.speechRecognition) {
+      try {
+        this.speechRecognition.stop();
+      } catch {
+        // ignore stop errors
+      }
+    }
+    if (this.transcriptionBaseText) {
+      this.searchQuery = this.transcriptionBaseText;
+    }
+    if (!forceMessage) {
+      this.aiStatusMessage = 'Transcrição finalizada.';
+    }
+    this.isTranscribing = false;
+  }
+
+  private resetAiForm() {
+    this.searchQuery = '';
+    this.clearAttachments();
+  }
+
+  private clearAttachments() {
+    this.aiAttachments = [];
+  }
+
+  private formatBytes(bytes: number): string {
+    if (!bytes) {
+      return '0 B';
+    }
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const value = bytes / Math.pow(1024, i);
+    return `${value.toFixed(1)} ${sizes[i]}`;
+  }
+
+  private generateAttachmentId(): string {
+    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+      return crypto.randomUUID();
+    }
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  private buildAiResponseText(prompt: string, attachments: number): string {
+    const basePrompt = prompt || 'Seus anexos';
+    const attachmentInfo = attachments > 0 ? ` Incluí ${attachments} anexo(s) na análise.` : '';
+    return `${basePrompt} recebeu uma análise personalizada. ${attachmentInfo} Confira as recomendações destacando mentores, planos e próximos passos sugeridos.`;
   }
 }
 

@@ -142,10 +142,10 @@ interface ActivityItem {
 })
 export class ProfileComponent {
   profile = {
-    initials: 'CF',
-    name: 'Camila Ferreira',
-    role: 'Head de Customer Success',
-    company: 'Nexa Retail',
+    initials: 'JS',
+    name: 'Jonatan Souza',
+    role: 'CEO',
+    company: 'MentorMatch',
     memberSince: '2019',
     plan: 'Premium Anual',
     renewal: '02 jan 2026',
@@ -190,5 +190,7 @@ export class ProfileComponent {
     }
   }
 }
+
+
 
 

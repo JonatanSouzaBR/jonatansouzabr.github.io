@@ -8,6 +8,7 @@ interface SectionConfig {
   title: string;
   layout: 'default' | 'top10' | 'continue';
   subtitle?: string;
+  category?: string;
 }
 
 @Component({
@@ -97,7 +98,9 @@ interface SectionConfig {
               <h2 class="text-xl md:text-2xl font-semibold">{{ section.title }}</h2>
               <p *ngIf="section.subtitle" class="text-xs md:text-sm text-white/60 mt-1">{{ section.subtitle }}</p>
             </div>
-            <button class="text-xs md:text-sm uppercase tracking-wide text-white/70 hover:text-white transition-colors">
+            <button 
+              class="text-xs md:text-sm uppercase tracking-wide text-white/70 hover:text-white transition-colors"
+              (click)="viewAll(section)">
               Ver tudo
             </button>
           </div>
@@ -238,10 +241,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   homepageSections: SectionConfig[] = [
     { id: 'new', title: 'Novas mentorias para você', layout: 'default', subtitle: 'Lançamentos e estreias guiadas pela comunidade' },
     { id: 'top10', title: 'Top mentorias da semana', layout: 'top10', subtitle: 'Baseado no engajamento da MentorMatch' },
-    { id: 'lideres', title: 'Para quem lidera times', layout: 'default', subtitle: 'Mentorias sobre cultura, performance e estratégia' },
-    { id: 'produto', title: 'Produto, Growth e Tech', layout: 'default', subtitle: 'Playbooks aplicáveis para squads digitais' },
-    { id: 'people', title: 'People, cultura e diversidade', layout: 'default', subtitle: 'Ferramentas para RH estratégico' },
-    { id: 'criativos', title: 'Storytelling e comunicação', layout: 'default', subtitle: 'Mentorias para apresentações e narrativas' },
+    { id: 'lideres', title: 'Para quem lidera times', layout: 'default', subtitle: 'Mentorias sobre cultura, performance e estratégia', category: 'Liderança' },
+    { id: 'produto', title: 'Produto, Growth e Tech', layout: 'default', subtitle: 'Playbooks aplicáveis para squads digitais', category: 'Tecnologia' },
+    { id: 'people', title: 'People, cultura e diversidade', layout: 'default', subtitle: 'Ferramentas para RH estratégico', category: 'Empreendedorismo' },
+    { id: 'criativos', title: 'Storytelling e comunicação', layout: 'default', subtitle: 'Mentorias para apresentações e narrativas', category: 'Marketing' },
     { id: 'continue', title: 'Continue de onde parou', layout: 'continue', subtitle: 'Retome suas mentorias em andamento' }
   ];
 
@@ -254,6 +257,15 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   openHeroSlide(id: string) {
     this.openMasterclass(id);
+  }
+
+  viewAll(section: SectionConfig) {
+    if (section.category) {
+      this.router.navigate(['/masterclasses'], { queryParams: { category: section.category } });
+      return;
+    }
+
+    this.router.navigate(['/masterclasses']);
   }
 
   get activeHero() {

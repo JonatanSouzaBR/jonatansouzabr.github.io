@@ -140,10 +140,10 @@ export class SettingsComponent {
 
   constructor(private fb: FormBuilder, private notificationService: NotificationService) {
     this.accountForm = this.fb.group({
-      name: ['Camila Ferreira', Validators.required],
-      email: ['camila.ferreira@nexaretail.com', [Validators.required, Validators.email]],
-      company: ['Nexa Retail'],
-      role: ['Head de Customer Success']
+      name: ['Jonatan Souza', Validators.required],
+      email: ['jonatan.souza@mentormatch.com', [Validators.required, Validators.email]],
+      company: ['MentorMatch'],
+      role: ['CEO']
     });
 
     this.securityForm = this.fb.group({
@@ -193,5 +193,7 @@ export class SettingsComponent {
     this.notificationService.warning('Sessões serão encerradas em todos os dispositivos.');
   }
 }
+
+
 
 

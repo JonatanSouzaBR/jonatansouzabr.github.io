@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 interface Masterclass {
   id: number;
@@ -18,7 +19,7 @@ interface Masterclass {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="min-h-screen bg-mc-black pb-12">
+    <div class="min-h-screen bg-mc-black pb-12 pt-14 md:pt-16">
       <div class="container mx-auto px-6">
         <div class="mb-12">
           <h1 class="font-mc-bold mb-4 tracking-wide font-mc text-mc-4xl text-mc-white">Masterclasses</h1>
@@ -90,9 +91,27 @@ interface Masterclass {
   `,
   styles: []
 })
-export class MasterclassesComponent {
+export class MasterclassesComponent implements OnInit, OnDestroy {
   categories = ['Todas', 'Liderança', 'Empreendedorismo', 'Marketing', 'Tecnologia', 'Design'];
   selectedCategory = 'Todas';
+  private queryParamsSub?: Subscription;
+
+  constructor(private route: ActivatedRoute, private router: Router) {}
+
+  ngOnInit() {
+    this.queryParamsSub = this.route.queryParamMap.subscribe(params => {
+      const categoryParam = params.get('category');
+      if (categoryParam && this.categories.includes(categoryParam)) {
+        this.selectedCategory = categoryParam;
+      } else {
+        this.selectedCategory = 'Todas';
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.queryParamsSub?.unsubscribe();
+  }
 
   masterclasses: Masterclass[] = [
     {
@@ -165,7 +184,17 @@ export class MasterclassesComponent {
   }
 
   filterByCategory(category: string) {
+    if (!this.categories.includes(category)) {
+      return;
+    }
+
     this.selectedCategory = category;
+    const queryParams = category === 'Todas' ? { category: null } : { category };
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge'
+    });
   }
 
   getMentorImage(mentorName: string): string {
