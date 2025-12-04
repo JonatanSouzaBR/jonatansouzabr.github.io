@@ -26,11 +26,15 @@ body {
   line-height: $mc-line-height-normal;
   overflow-x: hidden;
   background-color: $mc-bg-primary;
+  background-image: linear-gradient(180deg, #0b0b0b 0%, #141414 35%, #000000 90%);
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 html, body, app-root {
   min-height: 100%;
   background-color: $mc-bg-primary !important;
+  background-image: inherit;
 }
 
 // ============================================
@@ -323,16 +327,14 @@ img {
   border-radius: $mc-radius-lg;
   background-color: $mc-panel;
   overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
   box-shadow: $mc-shadow-md;
-  transform-origin: center center;
-  will-change: transform, box-shadow;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
 
-  &:hover {
-    transform: translateY(-18px) scale(1.12);
-    box-shadow: $mc-shadow-2xl;
-    z-index: 30;
-  }
+.netflix-card:hover {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.95);
 }
 
 .netflix-row-gradient {
@@ -353,131 +355,6 @@ img {
 
 .netflix-card:hover .card-overlay {
   opacity: 1;
-}
-
-.card-info-base {
-  transition: opacity $mc-transition-base;
-}
-
-.netflix-card:hover .card-info-base {
-  opacity: 0;
-}
-
-.card-hover-panel {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1rem;
-  background: linear-gradient(180deg, rgba(5, 5, 5, 0) 20%, rgba(5, 5, 5, 0.95) 100%);
-  opacity: 0;
-  transform: translateY(12px) scale(0.98);
-  transition: opacity $mc-transition-slow, transform $mc-transition-slow;
-  pointer-events: none;
-  z-index: 20;
-}
-
-.netflix-card:hover .card-hover-panel {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.card-hover-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.card-hover-meta .match-score {
-  color: $mc-success;
-  font-weight: $mc-font-weight-semibold;
-  letter-spacing: 0;
-}
-
-.card-hover-title {
-  font-size: 1rem;
-  font-weight: $mc-font-weight-bold;
-  margin: 0.25rem 0 0.4rem;
-}
-
-.card-hover-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.65rem;
-}
-
-.card-hover-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background-color: rgba(0, 0, 0, 0.6);
-  color: $mc-white;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform $mc-transition-fast, background-color $mc-transition-fast, border-color $mc-transition-fast;
-}
-
-.card-hover-btn.primary {
-  width: 40px;
-  height: 40px;
-  background-color: $mc-white;
-  color: $mc-black;
-  border-color: $mc-white;
-}
-
-.card-hover-btn:hover {
-  transform: scale(1.05);
-  border-color: $mc-white;
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.card-hover-btn.primary:hover {
-  background-color: $mc-gray-100;
-  color: $mc-black;
-}
-
-.card-hover-progress {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.85);
-  margin-bottom: 0.35rem;
-}
-
-.card-hover-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.card-hover-tags span {
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-@media (max-width: $mc-breakpoint-md) {
-  .netflix-card:hover {
-    transform: translateY(0) scale(1);
-    box-shadow: $mc-shadow-md;
-  }
-
-  .card-hover-panel {
-    display: none;
-  }
-
-  .card-info-base {
-    opacity: 1 !important;
-  }
 }
 
 .card-play {

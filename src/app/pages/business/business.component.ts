@@ -11,7 +11,7 @@ import { NotificationService } from '../../services/notification.service';
   template: `
     <div class="min-h-screen bg-mc-black">
       <!-- Hero Section with Instructor Grid -->
-      <section class="relative pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
+      <section class="relative pt-8 md:pt-12 pb-16 md:pb-24 overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-mc-gray-900 via-mc-black to-mc-black"></div>
         <div class="container mx-auto px-6 md:px-12 lg:px-16 relative z-10">
           <!-- Instructor Grid -->

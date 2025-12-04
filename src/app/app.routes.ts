@@ -9,6 +9,8 @@ import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { BusinessComponent } from './pages/business/business.component';
 import { GiftsComponent } from './pages/gifts/gifts.component';
 import { MembershipComponent } from './pages/membership/membership.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,6 +23,8 @@ export const routes: Routes = [
   { path: 'empresas', component: BusinessComponent },
   { path: 'presentes', component: GiftsComponent },
   { path: 'planos', component: MembershipComponent },
+  { path: 'perfil', component: ProfileComponent },
+  { path: 'configuracoes', component: SettingsComponent },
   { path: '**', redirectTo: '' }
 ];
 

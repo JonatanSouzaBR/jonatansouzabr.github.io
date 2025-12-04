@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface CartItem {
-  id: number;
+  id: string;
   title: string;
   mentor: string;
   price: number;
@@ -11,7 +11,7 @@ export interface CartItem {
 }
 
 export interface WishlistItem {
-  id: number;
+  id: string;
   title: string;
   mentor: string;
   price: number;
@@ -46,7 +46,7 @@ export class CartService {
     }
   }
 
-  removeFromCart(id: number): void {
+  removeFromCart(id: string): void {
     this.cartItems = this.cartItems.filter(item => item.id !== id);
     this.saveToStorage();
     this.cartSubject.next([...this.cartItems]);
@@ -70,7 +70,7 @@ export class CartService {
     return this.cartItems.reduce((total, item) => total + item.price, 0);
   }
 
-  isInCart(id: number): boolean {
+  isInCart(id: string): boolean {
     return this.cartItems.some(item => item.id === id);
   }
 
@@ -84,7 +84,7 @@ export class CartService {
     }
   }
 
-  removeFromWishlist(id: number): void {
+  removeFromWishlist(id: string): void {
     this.wishlistItems = this.wishlistItems.filter(item => item.id !== id);
     this.saveToStorage();
     this.wishlistSubject.next([...this.wishlistItems]);
@@ -104,11 +104,11 @@ export class CartService {
     return this.wishlistItems.length;
   }
 
-  isInWishlist(id: number): boolean {
+  isInWishlist(id: string): boolean {
     return this.wishlistItems.some(item => item.id === id);
   }
 
-  moveToCart(id: number): void {
+  moveToCart(id: string): void {
     const item = this.wishlistItems.find(i => i.id === id);
     if (item) {
       this.addToCart(item);
@@ -128,12 +128,14 @@ export class CartService {
       const wishlistData = localStorage.getItem('mentormatch_wishlist');
       
       if (cartData) {
-        this.cartItems = JSON.parse(cartData);
+        const parsedCart: CartItem[] = JSON.parse(cartData);
+        this.cartItems = parsedCart.map(item => ({ ...item, id: String(item.id) }));
         this.cartSubject.next([...this.cartItems]);
       }
       
       if (wishlistData) {
-        this.wishlistItems = JSON.parse(wishlistData);
+        const parsedWishlist: WishlistItem[] = JSON.parse(wishlistData);
+        this.wishlistItems = parsedWishlist.map(item => ({ ...item, id: String(item.id) }));
         this.wishlistSubject.next([...this.wishlistItems]);
       }
     } catch (error) {
@@ -141,6 +143,7 @@ export class CartService {
     }
   }
 }
+
 
 
 

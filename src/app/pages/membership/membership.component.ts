@@ -20,63 +20,58 @@ interface MembershipPlan {
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="min-h-screen bg-mc-black">
-      <!-- Header with Progress Steps -->
-      <header class="sticky top-0 z-50 bg-mc-black border-b border-mc-gray-800">
-        <div class="container mx-auto px-6 py-4">
-          <div class="flex items-center justify-between">
-            <!-- Logo -->
-            <a routerLink="/" class="mentormatch-logo-chanel cursor-pointer">
-              <span class="logo-text-chanel">MentorMatch</span>
-            </a>
-
-            <!-- Progress Steps -->
-            <div class="hidden md:flex items-center space-x-8">
-              <div class="flex items-center">
-                <div class="flex items-center">
-                  <div [class.bg-green-500]="currentStep >= 1" 
-                       [class.bg-mc-gray-700]="currentStep < 1"
-                       class="w-8 h-8 rounded-full flex items-center justify-center text-white font-mc font-mc-semibold text-sm">
-                    <span *ngIf="currentStep > 1">✓</span>
-                    <span *ngIf="currentStep === 1">1</span>
-                  </div>
-                  <div [class.text-green-500]="currentStep >= 1" 
-                       [class.text-mc-gray-500]="currentStep < 1"
-                       class="ml-3 font-mc font-mc-semibold text-sm">Plano</div>
+      <!-- Progress Steps Bar -->
+      <section class="bg-mc-black border-b border-mc-gray-800">
+        <div class="container mx-auto px-6 py-6">
+          <div class="flex justify-center">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-0 text-sm font-mc text-mc-text-secondary w-full max-w-3xl">
+              <div class="flex items-center gap-3">
+                <div [class.bg-green-500]="currentStep >= 1"
+                     [class.bg-mc-gray-700]="currentStep < 1"
+                     class="w-8 h-8 rounded-full flex items-center justify-center text-white font-mc font-mc-semibold text-sm">
+                  <span *ngIf="currentStep > 1">✓</span>
+                  <span *ngIf="currentStep === 1">1</span>
                 </div>
+                <span [class.text-mc-white]="currentStep >= 1"
+                      [class.text-mc-gray-500]="currentStep < 1"
+                      class="font-mc font-mc-semibold">Plano</span>
               </div>
-              <div class="w-12 h-0.5 bg-mc-gray-700"></div>
-              <div class="flex items-center">
-                <div [class.bg-green-500]="currentStep >= 2" 
+
+              <div class="sm:hidden h-px w-full bg-mc-gray-800"></div>
+              <div class="hidden sm:block flex-1 h-0.5 mx-6 rounded-full"
+                   [ngClass]="currentStep > 1 ? 'bg-green-500' : 'bg-mc-gray-700'"></div>
+
+              <div class="flex items-center gap-3">
+                <div [class.bg-green-500]="currentStep >= 2"
                      [class.bg-mc-gray-700]="currentStep < 2"
                      class="w-8 h-8 rounded-full flex items-center justify-center text-white font-mc font-mc-semibold text-sm">
                   <span *ngIf="currentStep > 2">✓</span>
                   <span *ngIf="currentStep <= 2">2</span>
                 </div>
-                <div [class.text-green-500]="currentStep >= 2" 
-                     [class.text-mc-gray-500]="currentStep < 2"
-                     class="ml-3 font-mc font-mc-semibold text-sm">Conta</div>
+                <span [class.text-mc-white]="currentStep >= 2"
+                      [class.text-mc-gray-500]="currentStep < 2"
+                      class="font-mc font-mc-semibold">Conta</span>
               </div>
-              <div class="w-12 h-0.5 bg-mc-gray-700"></div>
-              <div class="flex items-center">
-                <div [class.bg-green-500]="currentStep >= 3" 
+
+              <div class="sm:hidden h-px w-full bg-mc-gray-800"></div>
+              <div class="hidden sm:block flex-1 h-0.5 mx-6 rounded-full"
+                   [ngClass]="currentStep > 2 ? 'bg-green-500' : 'bg-mc-gray-700'"></div>
+
+              <div class="flex items-center gap-3">
+                <div [class.bg-green-500]="currentStep >= 3"
                      [class.bg-mc-gray-700]="currentStep < 3"
                      class="w-8 h-8 rounded-full flex items-center justify-center text-white font-mc font-mc-semibold text-sm">
                   <span *ngIf="currentStep > 3">✓</span>
                   <span *ngIf="currentStep <= 3">3</span>
                 </div>
-                <div [class.text-green-500]="currentStep >= 3" 
-                     [class.text-mc-gray-500]="currentStep < 3"
-                     class="ml-3 font-mc font-mc-semibold text-sm">Pagamento</div>
+                <span [class.text-mc-white]="currentStep >= 3"
+                      [class.text-mc-gray-500]="currentStep < 3"
+                      class="font-mc font-mc-semibold">Pagamento</span>
               </div>
             </div>
-
-            <!-- Login Link -->
-            <a href="#" class="text-mc-white hover:text-mc-gray-300 transition-colors font-mc text-mc-sm font-mc-semibold">
-              Entrar
-            </a>
           </div>
         </div>
-      </header>
+      </section>
 
 
       <!-- Step 1: Membership Selection -->

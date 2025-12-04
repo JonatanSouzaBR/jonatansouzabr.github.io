@@ -9,7 +9,7 @@ import { NotificationService } from '../../services/notification.service';
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="min-h-screen bg-mc-black py-12 pt-24">
+    <div class="min-h-screen bg-mc-black py-12">
       <div class="container mx-auto px-6">
         <div class="mb-8">
           <h1 class="text-mc-4xl font-mc-bold text-mc-white mb-4 font-mc">Lista de Desejos</h1>
@@ -96,7 +96,7 @@ export class WishlistComponent implements OnInit {
     this.wishlistItems = this.cartService.getWishlistItems();
   }
 
-  removeFromWishlist(id: number) {
+  removeFromWishlist(id: string) {
     const item = this.wishlistItems.find(i => i.id === id);
     this.cartService.removeFromWishlist(id);
     if (item) {
@@ -104,7 +104,7 @@ export class WishlistComponent implements OnInit {
     }
   }
 
-  moveToCart(id: number) {
+  moveToCart(id: string) {
     const item = this.wishlistItems.find(i => i.id === id);
     this.cartService.moveToCart(id);
     if (item) {

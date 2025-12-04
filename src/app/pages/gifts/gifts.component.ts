@@ -11,7 +11,7 @@ import { NotificationService } from '../../services/notification.service';
   template: `
     <div class="min-h-screen bg-mc-black">
       <!-- Hero Section -->
-      <section class="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-mc-black">
+      <section class="relative pt-8 pb-16 md:pt-12 md:pb-24 bg-mc-black">
         <div class="container mx-auto px-6">
           <div class="max-w-4xl mx-auto text-center">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-mc-bold text-mc-white mb-6 font-mc">
@@ -533,6 +533,7 @@ export class GiftsComponent implements OnInit {
     }, 2000);
   }
 }
+
 
 
 

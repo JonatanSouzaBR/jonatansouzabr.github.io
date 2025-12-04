@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart.service';
 import { NotificationService } from '../../services/notification.service';
+import { MASTERCLASS_DETAIL_DATA, MasterclassDetail } from '../../data/masterclasses.data';
 
 @Component({
   selector: 'app-masterclass-detail',
@@ -163,52 +164,19 @@ import { NotificationService } from '../../services/notification.service';
   styles: []
 })
 export class MasterclassDetailComponent implements OnInit {
-  masterclassData: any = {
-    1: {
-      id: 1,
-      title: 'Liderança e Gestão de Equipes',
-      mentor: 'João Silva',
-      mentorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-      videoImage: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
-      thumbnail: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
-      description: 'Nesta masterclass exclusiva, você aprenderá técnicas avançadas de liderança e como construir equipes de alto desempenho. João Silva, com mais de 20 anos de experiência em gestão de pessoas, compartilha seus segredos e estratégias comprovadas.',
-      price: 299
-    },
-    2: {
-      id: 2,
-      title: 'Empreendedorismo Digital',
-      mentor: 'Maria Santos',
-      mentorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-      videoImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&h=1080&fit=crop',
-      thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&h=1080&fit=crop',
-      description: 'Do conceito à execução: aprenda como criar e escalar negócios digitais de sucesso. Maria Santos, fundadora de múltiplas startups, compartilha sua experiência prática.',
-      price: 299
-    },
-    3: {
-      id: 3,
-      title: 'Marketing e Branding',
-      mentor: 'Carlos Oliveira',
-      mentorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-      videoImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop',
-      thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop',
-      description: 'Estratégias de marketing modernas e construção de marcas memoráveis. Carlos Oliveira, diretor de marketing de grandes empresas, ensina os segredos do branding de sucesso.',
-      price: 299
-    }
-  };
-
-  currentMasterclass: any = {};
+  private readonly defaultMasterclass: MasterclassDetail = MASTERCLASS_DETAIL_DATA['lideranca-fusao'];
+  currentMasterclass: MasterclassDetail = this.defaultMasterclass;
   isInCart = false;
   isInWishlist = false;
 
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService,
-    private router: Router,
     private notificationService: NotificationService
   ) {
     this.route.params.subscribe(params => {
-      const id = +params['id'];
-      this.currentMasterclass = this.masterclassData[id] || this.masterclassData[1];
+      const id = params['id'];
+      this.currentMasterclass = MASTERCLASS_DETAIL_DATA[id] || this.defaultMasterclass;
       this.checkCartAndWishlist();
     });
   }
@@ -218,14 +186,14 @@ export class MasterclassDetailComponent implements OnInit {
   }
 
   checkCartAndWishlist() {
-    if (this.currentMasterclass.id) {
+    if (this.currentMasterclass?.id) {
       this.isInCart = this.cartService.isInCart(this.currentMasterclass.id);
       this.isInWishlist = this.cartService.isInWishlist(this.currentMasterclass.id);
     }
   }
 
   addToCart() {
-    if (this.currentMasterclass.id && !this.isInCart) {
+    if (this.currentMasterclass?.id && !this.isInCart) {
       this.cartService.addToCart({
         id: this.currentMasterclass.id,
         title: this.currentMasterclass.title,
@@ -240,7 +208,7 @@ export class MasterclassDetailComponent implements OnInit {
   }
 
   toggleWishlist() {
-    if (this.currentMasterclass.id) {
+    if (this.currentMasterclass?.id) {
       if (this.isInWishlist) {
         this.cartService.removeFromWishlist(this.currentMasterclass.id);
         this.isInWishlist = false;

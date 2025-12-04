@@ -10,7 +10,7 @@ import { NotificationService } from '../../services/notification.service';
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="min-h-screen bg-mc-black py-12 pt-24">
+    <div class="min-h-screen bg-mc-black py-12">
       <div class="container mx-auto px-6">
         <div class="mb-8">
           <h1 class="text-mc-4xl font-mc-bold text-mc-white mb-4 font-mc">Carrinho de Compras</h1>
@@ -130,7 +130,7 @@ export class CartComponent implements OnInit {
     this.cartItems = this.cartService.getCartItems();
   }
 
-  removeFromCart(id: number) {
+  removeFromCart(id: string) {
     const item = this.cartItems.find(i => i.id === id);
     this.cartService.removeFromCart(id);
     if (item) {

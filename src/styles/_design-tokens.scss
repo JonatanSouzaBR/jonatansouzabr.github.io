@@ -9,12 +9,12 @@
 
 // Cores Primárias Netflix Minimalista
 $mc-black: #000000;
-$mc-night: #000000;
-$mc-panel: #050505;
+$mc-night: #141414;
+$mc-panel: #181818;
 $mc-white: #FFFFFF;
 $mc-red: #E50914; // Netflix Red
 $mc-red-hover: #F40612;
-$mc-success: #46D369; // Netflix match score green
+$mc-success: #46D369; // Netflix match percentage green
 
 // Cores Neutras (Grayscale)
 $mc-gray-50: #FAFAFA;
@@ -38,7 +38,7 @@ $mc-text-disabled: rgba(255, 255, 255, 0.38);
 // Cores de Background
 $mc-bg-primary: $mc-night;
 $mc-bg-secondary: $mc-panel;
-$mc-bg-tertiary: #0B0B0B;
+$mc-bg-tertiary: #0F0F0F;
 
 // Cores de Estado
 $mc-hover-overlay: rgba(20, 20, 20, 0.6);

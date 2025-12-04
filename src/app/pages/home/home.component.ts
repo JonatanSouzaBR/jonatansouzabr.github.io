@@ -1,88 +1,63 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-interface HeroSlide {
-  id: string;
-  title: string;
-  tagline: string;
-  maturity: string;
-  duration: string;
-  matchScore: number;
-  focusAreas: string[];
-  heroImage: string;
-}
-
-interface ContentItem {
-  id: string;
-  title: string;
-  maturity: string;
-  duration: string;
-  thumbnail: string;
-  tags: string[];
-  matchScore?: number;
-  top10Rank?: number;
-  continueWatching?: boolean;
-  progress?: number;
-  badge?: string;
-}
+import { HERO_SLIDES, HeroSlide, MASTERCLASS_SUMMARY, MasterclassSummary } from '../../data/masterclasses.data';
 
 interface SectionConfig {
   id: string;
   title: string;
   layout: 'default' | 'top10' | 'continue';
   subtitle?: string;
-  ctaLabel?: string;
-  ctaRoute?: string;
-  ctaFragment?: string;
 }
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [CommonModule],
   template: `
     <div class="relative bg-black min-h-screen w-full text-white">
       <!-- Hero -->
-      <section class="relative w-full group" style="height: 82vh; min-height: 520px;"
+      <section class="relative w-full group hero-stage mt-6 md:mt-8 lg:mt-10" style="min-height: clamp(500px, 78vh, 760px);"
                (mouseenter)="stopHeroLoop()"
-               (mouseleave)="startHeroLoop()">
+               (mouseleave)="startHeroLoop()"
+               (pointerdown)="onHeroPointerDown($event)"
+               (pointerup)="onHeroPointerUp($event)"
+               (pointerleave)="onHeroPointerLeave()"
+               (pointercancel)="onHeroPointerLeave()"
+               (wheel)="onHeroWheel($event)">
         <img [src]="activeHero.heroImage"
              [alt]="activeHero.title"
              class="absolute inset-0 w-full h-full object-cover object-center">
         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
 
-        <div class="relative z-10 h-full flex items-end pb-16 md:pb-24 px-6 md:px-12 lg:px-16">
+        <div class="relative z-10 h-full flex items-end pt-8 md:pt-12 pb-14 md:pb-20 px-4 sm:px-8 lg:px-16">
           <div class="max-w-3xl">
-            <div class="flex items-center gap-3 text-sm text-white/80 mb-3">
-              <span class="text-green-400 font-semibold">{{ activeHero.matchScore }}% dos líderes recomendam</span>
-              <span class="px-2 py-0.5 border border-white/40 text-xs rounded">{{ activeHero.maturity }}</span>
-              <span>{{ activeHero.duration }}</span>
-            </div>
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
               {{ activeHero.title }}
             </h1>
             <p class="text-lg md:text-xl text-white/90 mb-6 max-w-2xl">
               {{ activeHero.tagline }}
             </p>
-            <div class="flex items-center gap-4">
-              <button class="flex items-center gap-3 bg-white text-black px-6 py-3 rounded font-semibold hover:bg-gray-200 transition-colors">
+            <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
+              <button class="flex items-center gap-2 sm:gap-3 bg-white text-black px-5 sm:px-6 py-2.5 rounded font-semibold hover:bg-gray-200 transition-colors"
+                      (click)="openHeroSlide(activeHero.id)">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
             </svg>
-                <span>Assistir agora</span>
+                <span>Assistir</span>
           </button>
-              <button class="flex items-center gap-3 bg-white/20 text-white px-6 py-3 rounded font-semibold hover:bg-white/30 transition-colors">
+              <button class="flex items-center gap-2 sm:gap-3 bg-white/20 text-white px-5 sm:px-6 py-2.5 rounded font-semibold hover:bg-white/30 transition-colors"
+                      (click)="openHeroSlide(activeHero.id)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-                <span>Ver programa</span>
+                <span>Mais informações</span>
           </button>
                 </div>
             <div class="flex flex-wrap items-center gap-2 mt-6 text-sm text-white/80">
-              <span *ngFor="let focus of activeHero.focusAreas; let last = last">
-                {{ focus }}<span *ngIf="!last"> • </span>
+              <span *ngFor="let genre of activeHero.genres; let last = last">
+                {{ genre }}<span *ngIf="!last"> • </span>
               </span>
               </div>
             </div>
@@ -114,73 +89,29 @@ interface SectionConfig {
                 [style.background]="currentHero === i ? '#fff' : 'rgba(255,255,255,0.4)'"></button>
               </div>
 
-      <ng-template #cardHover let-item="item">
-        <div class="card-hover-panel">
-          <div class="card-hover-meta" *ngIf="item.matchScore || item.maturity || item.duration">
-            <span class="match-score" *ngIf="item.matchScore">{{ item.matchScore }}% relevante</span>
-            <span *ngIf="item.maturity">{{ item.maturity }}</span>
-            <span *ngIf="item.duration">{{ item.duration }}</span>
-          </div>
-          <h3 class="card-hover-title">{{ item.title }}</h3>
-          <div class="card-hover-actions">
-            <button class="card-hover-btn primary" aria-label="Assistir agora">
-              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <button class="card-hover-btn" aria-label="Adicionar à lista">
-              <svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M12 5v14m-7-7h14"/></svg>
-            </button>
-            <button class="card-hover-btn" aria-label="Gostei">
-              <svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M14 9V5a3 3 0 00-6 0v4H5v11h10l4-9V9h-5z"/></svg>
-            </button>
-            <button class="card-hover-btn" aria-label="Mais informações">
-              <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </button>
-          </div>
-          <p class="card-hover-progress" *ngIf="item.progress">
-            Continue de onde parou • {{ item.progress }}%
-          </p>
-          <div class="card-hover-tags" *ngIf="item.tags as tagsList">
-            <span *ngFor="let tag of tagsList.slice(0, 3)">
-              {{ getTagLabel(tag) }}
-            </span>
-          </div>
-        </div>
-      </ng-template>
-
       <!-- Rows -->
-      <div class="-mt-28 md:-mt-36 space-y-12 pb-16">
-        <section *ngFor="let section of homepageSections" class="px-4 md:px-10" [attr.id]="section.id">
-          <div class="flex items-end justify-between mb-3 md:mb-4">
+      <div class="space-y-12 pb-16 mt-12 sm:mt-10 lg:mt-8">
+        <section *ngFor="let section of homepageSections" class="px-4 md:px-10">
+          <div class="flex flex-wrap gap-3 items-end justify-between mb-3 md:mb-4">
             <div>
               <h2 class="text-xl md:text-2xl font-semibold">{{ section.title }}</h2>
               <p *ngIf="section.subtitle" class="text-xs md:text-sm text-white/60 mt-1">{{ section.subtitle }}</p>
             </div>
-            <a *ngIf="section.ctaRoute; else defaultCta"
-               [routerLink]="section.ctaRoute"
-               [fragment]="section.ctaFragment || undefined"
-               class="text-xs md:text-sm uppercase tracking-wide text-white/70 hover:text-white transition-colors">
-              {{ section.ctaLabel || 'Ver tudo' }}
-            </a>
-            <ng-template #defaultCta>
-              <span class="text-xs md:text-sm uppercase tracking-wide text-white/40">
+            <button class="text-xs md:text-sm uppercase tracking-wide text-white/70 hover:text-white transition-colors">
               Ver tudo
-              </span>
-            </ng-template>
+            </button>
           </div>
           
           <ng-container *ngIf="getItemsForSection(section.id) as items">
             <ng-container *ngIf="items.length > 0; else emptySection">
-              <div class="relative group">
-                <div class="overflow-x-auto scrollbar-hide" [attr.data-row]="section.id">
-                  <div class="flex space-x-3 pb-6" [ngSwitch]="section.layout">
+              <div class="relative group overflow-visible z-0">
+                <div class="overflow-x-auto overflow-y-visible scrollbar-hide z-0" [attr.data-row]="section.id">
+                  <div class="flex space-x-3 py-6" [ngSwitch]="section.layout">
                     <ng-container *ngSwitchCase="'top10'">
-                      <div *ngFor="let item of items; trackBy: trackById" class="flex items-center gap-3 min-w-[280px]">
+                      <div *ngFor="let item of items; trackBy: trackById" class="flex items-center gap-3 min-w-[260px] sm:min-w-[320px] lg:min-w-[360px] my-3">
                         <span class="netflix-rank-outline">{{ item.top10Rank }}</span>
-                        <div class="relative netflix-card w-[180px] md:w-[210px] lg:w-[230px] aspect-[2/3] cursor-pointer"
-                             [routerLink]="['/masterclasses']"
-                             [queryParams]="{ id: item.id }">
+                        <div class="relative netflix-card w-[72vw] sm:w-[240px] md:w-[260px] lg:w-[320px] aspect-[16/9] cursor-pointer"
+                             (click)="openMasterclass(item.id)">
                           <img [src]="item.thumbnail" [alt]="item.title" class="w-full h-full object-cover">
                           <div class="card-overlay"></div>
                           <div class="card-actions">
@@ -201,16 +132,14 @@ interface SectionConfig {
                             <h3 class="text-white font-semibold text-sm leading-tight mb-1">{{ item.title }}</h3>
                             <p class="text-white/70 text-xs">{{ item.duration }}</p>
                           </div>
-                          <ng-container *ngTemplateOutlet="cardHover; context: { item: item }"></ng-container>
                         </div>
                       </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="'continue'">
                       <div *ngFor="let item of items; trackBy: trackById"
-                           class="flex-shrink-0 w-[190px] md:w-[210px] lg:w-[240px] cursor-pointer"
-                           [routerLink]="['/masterclasses']"
-                           [queryParams]="{ id: item.id }">
-                        <div class="relative netflix-card aspect-[2/3] overflow-hidden">
+                           class="flex-shrink-0 w-[72vw] sm:w-[240px] md:w-[260px] lg:w-[320px] cursor-pointer my-3">
+                        <div class="relative netflix-card aspect-[16/9] overflow-hidden"
+                             (click)="openMasterclass(item.id)">
                           <img [src]="item.thumbnail" [alt]="item.title" class="w-full h-full object-cover">
                           <div class="card-overlay"></div>
                           <button class="card-play" aria-label="Assistir">
@@ -224,16 +153,14 @@ interface SectionConfig {
                             </div>
                             <p class="text-white/70 text-xs mt-2">Continuar assistindo</p>
                           </div>
-                          <ng-container *ngTemplateOutlet="cardHover; context: { item: item }"></ng-container>
                         </div>
                       </div>
                     </ng-container>
                     <ng-container *ngSwitchDefault>
                       <div *ngFor="let item of items; trackBy: trackById"
-                           class="flex-shrink-0 w-[170px] md:w-[200px] lg:w-[240px] cursor-pointer"
-                           [routerLink]="['/masterclasses']"
-                           [queryParams]="{ id: item.id }">
-                        <div class="relative netflix-card aspect-[2/3] overflow-hidden">
+                           class="flex-shrink-0 w-[72vw] sm:w-[240px] md:w-[260px] lg:w-[320px] cursor-pointer my-3">
+                        <div class="relative netflix-card aspect-[16/9] overflow-hidden"
+                             (click)="openMasterclass(item.id)">
                           <img [src]="item.thumbnail" [alt]="item.title" class="w-full h-full object-cover">
                           <div class="card-overlay"></div>
                           <div class="card-actions">
@@ -257,7 +184,6 @@ interface SectionConfig {
                             <h3 class="text-white font-semibold text-sm leading-tight mb-1">{{ item.title }}</h3>
                             <p class="text-white/70 text-xs">{{ item.duration }}</p>
                           </div>
-                          <ng-container *ngTemplateOutlet="cardHover; context: { item: item }"></ng-container>
                         </div>
                       </div>
                     </ng-container>
@@ -299,219 +225,39 @@ interface SectionConfig {
 export class HomeComponent implements AfterViewInit, OnDestroy {
   currentHero = 0;
   heroInterval: any;
+  private heroPointerStartX: number | null = null;
+  private heroPointerStartY: number | null = null;
+  private heroPointerStartTime = 0;
+  private readonly heroSwipeThreshold = 60;
+  private heroWheelCooldown = false;
+  private heroWheelTimeout: any;
+  constructor(private router: Router) {}
 
-  heroSlides: HeroSlide[] = [
-    {
-      id: 'lideranca-adaptativa',
-      title: 'Liderança Adaptativa em Ciclos de Crise',
-      tagline: 'Mentoria gravada com Ana Costa para decisões rápidas, alinhamento e segurança psicológica em times distribuídos.',
-      maturity: 'Intermediário • Liderança',
-      duration: 'Programa completo • 12 episódios',
-      matchScore: 99,
-      focusAreas: ['Gestão de times', 'Estratégia de crise', 'Comunicação executiva'],
-      heroImage: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'produto-growth',
-      title: 'Produto e Growth com Mentoria Hands-on',
-      tagline: 'Felipe Costa registra frameworks para discovery, priorização e growth loops aplicáveis amanhã.',
-      maturity: 'Avançado • Produto digital',
-      duration: 'Mentoria gravada • 6h de conteúdo',
-      matchScore: 96,
-      focusAreas: ['Product Discovery', 'Growth loops', 'Métricas North Star'],
-      heroImage: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?w=1920&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'cx-playbook',
-      title: 'CX Playbook para Líderes de Atendimento',
-      tagline: 'Camila Ferreira detalha rituais, NPS e jornadas omnichannel em aulas curtas com planilhas prontas.',
-      maturity: 'Essencial • Experiência do cliente',
-      duration: 'Série sob demanda • 8 módulos',
-      matchScore: 93,
-      focusAreas: ['Customer Success', 'Service Design', 'KPI em CX'],
-      heroImage: 'https://images.unsplash.com/photo-1485217988980-11786ced9454?w=1920&auto=format&fit=crop&q=80'
-    }
-  ];
+  heroSlides: HeroSlide[] = HERO_SLIDES;
 
   homepageSections: SectionConfig[] = [
-    { id: 'mentorias', title: 'Mentorias gravadas em destaque', layout: 'default', subtitle: 'Conteúdos prontos para assistir quando quiser', ctaRoute: '/masterclasses', ctaLabel: 'Ver catálogo completo' },
-    { id: 'trilhas', title: 'Trilhas profissionais guiadas', layout: 'default', subtitle: 'Sequências gravadas com planos de ação práticos', ctaRoute: '/planos', ctaLabel: 'Conhecer trilhas' },
-    { id: 'temas', title: 'Temas mais assistidos da semana', layout: 'top10', subtitle: 'Baseado nos dados da comunidade MentorMatch' },
-    { id: 'lideres', title: 'Para quem lidera pessoas', layout: 'default', subtitle: 'Mentorias sobre cultura, performance e estratégia', ctaRoute: '/empresas', ctaLabel: 'Ver soluções para empresas' },
-    { id: 'criativos', title: 'Marketing, produto e inovação', layout: 'default', subtitle: 'Frameworks e estudos de caso sob demanda', ctaRoute: '/masterclasses', ctaLabel: 'Explorar temas' },
-    { id: 'continue', title: 'Continue aprendendo', layout: 'continue', subtitle: 'Retome exatamente onde parou' }
+    { id: 'new', title: 'Novas mentorias para você', layout: 'default', subtitle: 'Lançamentos e estreias guiadas pela comunidade' },
+    { id: 'top10', title: 'Top mentorias da semana', layout: 'top10', subtitle: 'Baseado no engajamento da MentorMatch' },
+    { id: 'lideres', title: 'Para quem lidera times', layout: 'default', subtitle: 'Mentorias sobre cultura, performance e estratégia' },
+    { id: 'produto', title: 'Produto, Growth e Tech', layout: 'default', subtitle: 'Playbooks aplicáveis para squads digitais' },
+    { id: 'people', title: 'People, cultura e diversidade', layout: 'default', subtitle: 'Ferramentas para RH estratégico' },
+    { id: 'criativos', title: 'Storytelling e comunicação', layout: 'default', subtitle: 'Mentorias para apresentações e narrativas' },
+    { id: 'continue', title: 'Continue de onde parou', layout: 'continue', subtitle: 'Retome suas mentorias em andamento' }
   ];
 
-  allContent: ContentItem[] = [
-    {
-      id: 'lideranca-hibrida',
-      title: 'Mentoria Gravada: Liderança Híbrida de Alta Performance',
-      maturity: 'Intermediário',
-      duration: '4h12 de conteúdo sob demanda',
-      thumbnail: 'https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=800&auto=format&fit=crop&q=80',
-      tags: ['mentorias', 'temas', 'lideranca', 'new'],
-      top10Rank: 1,
-      matchScore: 99,
-      continueWatching: true,
-      progress: 45
-    },
-    {
-      id: 'produto-growth-lab',
-      title: 'Growth Lab: Produto Orientado a Dados',
-      maturity: 'Avançado',
-      duration: '5h05 • 9 módulos',
-      thumbnail: 'https://images.unsplash.com/photo-1485988412941-77a35537dae4?w=800&auto=format&fit=crop&q=80',
-      tags: ['mentorias', 'temas', 'criativos', 'trilhas'],
-      top10Rank: 2,
-      matchScore: 97
-    },
-    {
-      id: 'estrategia-dados',
-      title: 'Trilha Estratégia guiada por Dados',
-      maturity: 'Intermediário',
-      duration: '6h40 de gravações • materiais editáveis',
-      thumbnail: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80',
-      tags: ['trilhas', 'temas', 'criativos'],
-      top10Rank: 3,
-      matchScore: 94
-    },
-    {
-      id: 'cx-sprint',
-      title: 'CX Sprint: Experiência Omnichannel',
-      maturity: 'Essencial',
-      duration: '3h15 • 6 encontros',
-      thumbnail: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&auto=format&fit=crop&q=80',
-      tags: ['mentorias', 'temas', 'trilhas'],
-      top10Rank: 4,
-      matchScore: 92
-    },
-    {
-      id: 'okr-lideres',
-      title: 'Trilha OKR para líderes de área',
-      maturity: 'Essencial',
-      duration: '2h58 • planilhas prontas',
-      thumbnail: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80',
-      tags: ['trilhas', 'lideranca'],
-      top10Rank: 5,
-      matchScore: 91
-    },
-    {
-      id: 'storytelling-vendas',
-      title: 'Storytelling Comercial e Pitch',
-      maturity: 'Todos os níveis',
-      duration: '2h33 • estudos de caso',
-      thumbnail: 'https://images.unsplash.com/photo-1529333168431-9a1629a19c91?w=800&auto=format&fit=crop&q=80',
-      tags: ['mentorias', 'criativos'],
-      top10Rank: 6,
-      matchScore: 88,
-      continueWatching: true,
-      progress: 62
-    },
-    {
-      id: 'design-facilitation',
-      title: 'Facilitação de Design Sprints',
-      maturity: 'Intermediário',
-      duration: '3h45 • templates prontos',
-      thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&auto=format&fit=crop&q=80',
-      tags: ['criativos', 'trilhas'],
-      top10Rank: 7,
-      matchScore: 86
-    },
-    {
-      id: 'people-analytics',
-      title: 'People Analytics na prática',
-      maturity: 'Avançado',
-      duration: '4h05 • dashboards',
-      thumbnail: 'https://images.unsplash.com/photo-1521790797524-b2497295b8a0?w=800&auto=format&fit=crop&q=80',
-      tags: ['lideranca', 'trilhas', 'mentorias'],
-      top10Rank: 8,
-      matchScore: 90
-    },
-    {
-      id: 'negociacao-enterprise',
-      title: 'Negociação enterprise com playbooks',
-      maturity: 'Avançado',
-      duration: '3h20 • planilhas de apoio',
-      thumbnail: 'https://images.unsplash.com/photo-1521790945508-bf2a36314e85?w=800&auto=format&fit=crop&q=80',
-      tags: ['mentorias', 'lideranca'],
-      top10Rank: 9,
-      matchScore: 89
-    },
-    {
-      id: 'tech-rituais',
-      title: 'Rituais para times de tecnologia',
-      maturity: 'Intermediário',
-      duration: '2h47 • frameworks distribuídos',
-      thumbnail: 'https://images.unsplash.com/photo-1517433456452-f9633a875f6f?w=800&auto=format&fit=crop&q=80',
-      tags: ['mentorias', 'trilhas', 'temas'],
-      top10Rank: 10,
-      matchScore: 87,
-      continueWatching: true,
-      progress: 28
-    },
-    {
-      id: 'branding-autentico',
-      title: 'Branding Autêntico para Startups',
-      maturity: 'Essencial',
-      duration: '1h55 • exercícios guiados',
-      thumbnail: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80',
-      tags: ['criativos', 'mentorias', 'new'],
-      matchScore: 87
-    },
-    {
-      id: 'inovacao-servicos',
-      title: 'Inovação em Serviços e Experiências',
-      maturity: 'Intermediário',
-      duration: '3h10 • toolkit aplicável',
-      thumbnail: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=80',
-      tags: ['criativos', 'mentorias', 'trilhas'],
-      matchScore: 85
-    },
-    {
-      id: 'comunicacao-executiva',
-      title: 'Comunicação Executiva para Conselhos',
-      maturity: 'Avançado',
-      duration: '2h20 • roteiros práticos',
-      thumbnail: 'https://images.unsplash.com/photo-1521790361259-7b5049710bc7?w=800&auto=format&fit=crop&q=80',
-      tags: ['lideranca', 'mentorias'],
-      matchScore: 88
-    },
-    {
-      id: 'carreira-techexpert',
-      title: 'Trilha de Carreira Tech Expert',
-      maturity: 'Intermediário',
-      duration: '5h30 • roadmap completo',
-      thumbnail: 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?w=800&auto=format&fit=crop&q=80',
-      tags: ['trilhas', 'mentorias'],
-      matchScore: 84
-    }
-  ];
+  allContent: MasterclassSummary[] = MASTERCLASS_SUMMARY;
 
-  tagLabelMap: Record<string, string> = {
-    mentorias: 'Mentorias gravadas',
-    trilhas: 'Trilhas profissionais',
-    temas: 'Temas em alta',
-    lideranca: 'Liderança',
-    criativos: 'Marketing & inovação',
-    new: 'Novidade'
-  };
+
+  openMasterclass(id: string) {
+    this.router.navigate(['/masterclasses', id]);
+  }
+
+  openHeroSlide(id: string) {
+    this.openMasterclass(id);
+  }
 
   get activeHero() {
     return this.heroSlides[this.currentHero];
-  }
-
-  getTagLabel(tag: string): string {
-    if (!tag) {
-      return '';
-    }
-    return this.tagLabelMap[tag] ?? this.toTitleCase(tag);
-  }
-
-  private toTitleCase(value: string): string {
-    return value
-      .split(' ')
-      .map(word => word ? word.charAt(0).toUpperCase() + word.slice(1) : '')
-      .join(' ');
   }
 
   ngAfterViewInit() {
@@ -520,6 +266,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopHeroLoop();
+    if (this.heroWheelTimeout) {
+      clearTimeout(this.heroWheelTimeout);
+      this.heroWheelTimeout = null;
+    }
   }
 
   startHeroLoop() {
@@ -553,18 +303,70 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  onHeroPointerDown(event: PointerEvent) {
+    if (!event.isPrimary) return;
+    if (event.pointerType === 'mouse' && event.buttons !== 1) return;
+    this.heroPointerStartX = event.clientX;
+    this.heroPointerStartY = event.clientY;
+    this.heroPointerStartTime = event.timeStamp;
+  }
+
+  onHeroPointerUp(event: PointerEvent) {
+    if (!event.isPrimary || this.heroPointerStartX === null || this.heroPointerStartY === null) {
+      this.resetHeroPointer();
+      return;
+    }
+    const deltaX = event.clientX - this.heroPointerStartX;
+    const deltaY = event.clientY - this.heroPointerStartY;
+    const duration = event.timeStamp - this.heroPointerStartTime;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > this.heroSwipeThreshold && duration < 1000) {
+      deltaX < 0 ? this.nextHeroSlide() : this.previousHeroSlide();
+    }
+    this.resetHeroPointer();
+  }
+
+  onHeroPointerLeave() {
+    this.resetHeroPointer();
+  }
+
+  onHeroWheel(event: WheelEvent) {
+    if (this.heroWheelCooldown) return;
+    const horizontalIntent = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+    if (horizontalIntent && Math.abs(event.deltaX) > 20) {
+      event.preventDefault();
+      this.heroWheelCooldown = true;
+      event.deltaX > 0 ? this.nextHeroSlide() : this.previousHeroSlide();
+      if (this.heroWheelTimeout) {
+        clearTimeout(this.heroWheelTimeout);
+      }
+      this.heroWheelTimeout = setTimeout(() => {
+        this.heroWheelCooldown = false;
+        this.heroWheelTimeout = null;
+      }, 500);
+    }
+  }
+
+  private resetHeroPointer() {
+    this.heroPointerStartX = null;
+    this.heroPointerStartY = null;
+    this.heroPointerStartTime = 0;
+  }
+
   getItemsForSection(sectionId: string) {
     switch (sectionId) {
-      case 'mentorias':
-        return this.allContent.filter(item => item.tags.includes('mentorias'));
-      case 'trilhas':
-        return this.allContent.filter(item => item.tags.includes('trilhas'));
-      case 'temas':
+      case 'new':
+        return this.allContent.filter(item => item.tags.includes('new'));
+      case 'top10':
         return this.allContent
           .filter(item => typeof item.top10Rank === 'number')
           .sort((a, b) => (a.top10Rank ?? 0) - (b.top10Rank ?? 0));
       case 'lideres':
-        return this.allContent.filter(item => item.tags.includes('lideranca'));
+        return this.allContent.filter(item => item.tags.includes('lideres'));
+      case 'produto':
+        return this.allContent.filter(item => item.tags.includes('produto'));
+      case 'people':
+        return this.allContent.filter(item => item.tags.includes('people'));
       case 'criativos':
         return this.allContent.filter(item => item.tags.includes('criativos'));
       case 'continue':
@@ -585,7 +387,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  trackById(_index: number, item: ContentItem | HeroSlide) {
+  trackById(_index: number, item: MasterclassSummary | HeroSlide) {
     return item.id;
   }
 }

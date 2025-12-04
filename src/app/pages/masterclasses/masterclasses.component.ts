@@ -18,7 +18,7 @@ interface Masterclass {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="min-h-screen bg-mc-black pt-24 pb-12">
+    <div class="min-h-screen bg-mc-black pb-12">
       <div class="container mx-auto px-6">
         <div class="mb-12">
           <h1 class="font-mc-bold mb-4 tracking-wide font-mc text-mc-4xl text-mc-white">Masterclasses</h1>

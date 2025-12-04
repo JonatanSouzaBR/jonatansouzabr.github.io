@@ -1,33 +1,41 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { Subscription } from 'rxjs';
-
-interface NavLink {
-  id: string;
-  label: string;
-  route: string;
-  fragment?: string;
-}
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, FormsModule],
   template: `
     <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" 
             [ngClass]="{'bg-black': isScrolled, 'bg-gradient-to-b from-black via-black/80 to-transparent': !isScrolled}">
       <nav class="w-full px-4 md:px-8 lg:px-12">
         <div class="flex items-center justify-between h-16 md:h-20">
-          <div class="flex items-center space-x-6 md:space-x-8 flex-shrink-0">
-            <a routerLink="/" class="cursor-pointer">
-              <span class="text-white font-bold text-2xl md:text-3xl tracking-tight">MENTORMATCH</span>
+          <!-- Left Section: Logo + Navigation -->
+          <div class="flex items-center space-x-4 md:space-x-8 flex-shrink-0">
+            <!-- Logo MentorMatch Play -->
+            <a routerLink="/" class="cursor-pointer flex items-center space-x-3">
+              <span class="text-white font-bold text-xl md:text-2xl tracking-tight flex items-center gap-2">
+                MENTORMATCH
+                <span class="flex items-center gap-2">
+                  <span class="text-[#E50914]">PLAY</span>
+                  <span class="flex items-center justify-center w-7 h-7 rounded-full border border-[#E50914] text-[#E50914]">
+                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <span class="sr-only">Play</span>
+                  </span>
+                </span>
+              </span>
             </a>
+            
+            <!-- Navigation Links - Estilo Netflix -->
             <div class="hidden lg:flex items-center space-x-4">
               <a *ngFor="let link of navLinks"
                  [routerLink]="link.route"
-                 [fragment]="link.fragment || undefined"
                  (click)="setActiveNav(link.id)"
                  class="text-sm font-medium transition-colors"
                  [ngClass]="{
@@ -38,19 +46,58 @@ interface NavLink {
               </a>
             </div>
           </div>
-          <div class="flex items-center space-x-4 md:space-x-6 flex-shrink-0">
+
+          <!-- Right Section: Search + Icons + Profile -->
+          <div class="flex items-center space-x-3 md:space-x-5 flex-shrink-0">
+            <div class="hidden md:flex items-center">
+              <!-- Search Icon -->
+              <button (click)="toggleSearch()" class="text-white hover:text-gray-300 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Wishlist Icon -->
             <a routerLink="/lista-desejos" class="relative text-white hover:text-gray-300 transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
               </svg>
               <span *ngIf="wishlistCount > 0" class="absolute -top-2 -right-2 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ wishlistCount }}</span>
             </a>
+
+            <!-- Cart Icon -->
             <a routerLink="/carrinho" class="relative text-white hover:text-gray-300 transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
               </svg>
               <span *ngIf="cartCount > 0" class="absolute -top-2 -right-2 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cartCount }}</span>
             </a>
+
+            <!-- Profile Icon -->
+            <div class="relative profile-menu hidden sm:block">
+              <button (click)="toggleProfileMenu()" class="flex items-center space-x-2 text-white hover:text-gray-300 transition-colors">
+                <div class="w-8 h-8 bg-[#E50914] rounded flex items-center justify-center">
+                  <span class="text-white text-sm font-bold">J</span>
+                </div>
+                <svg class="w-4 h-4 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              
+              <!-- Profile Dropdown -->
+              <div *ngIf="showProfileMenu" 
+                   class="absolute top-full right-0 mt-2 w-48 bg-black border border-gray-800 rounded shadow-xl py-2 z-50"
+                   (click)="$event.stopPropagation()">
+                <a routerLink="/perfil" class="block px-4 py-2 text-white hover:bg-gray-900 transition-colors text-sm">Perfil</a>
+                <a routerLink="/configuracoes" class="block px-4 py-2 text-white hover:bg-gray-900 transition-colors text-sm">Configurações</a>
+                <div class="border-t border-gray-800 mt-2 pt-2">
+                  <a href="#" class="block px-4 py-2 text-white hover:bg-gray-900 transition-colors text-sm">Sair</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Menu -->
             <button (click)="toggleMobileMenu()" class="lg:hidden text-white">
               <svg *ngIf="!showMobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -61,43 +108,274 @@ interface NavLink {
             </button>
           </div>
         </div>
-        <div *ngIf="showMobileMenu" class="lg:hidden pb-4 border-t border-gray-800 mt-4 pt-4">
+
+        <!-- Search Bar (Expanded) -->
+        <div *ngIf="showSearch" class="pb-4">
+          <div class="ai-panel">
+            <div class="ai-panel__header">
+              <div class="ai-panel__identity">
+                <div class="ai-panel__avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 20l9-9"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l1.5-1.5M16 10l1.5-1.5M17 6l1-1M14 12l1-1"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 21l3-1-2-2-1 3z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="ai-panel__title">Mentor<span class="ai-panel__title-highlight">AI</span> Assistente</p>
+                  <p class="ai-panel__status">Disponível para montar mentorias sob medida</p>
+                </div>
+              </div>
+              <button class="ai-panel__close" (click)="toggleSearch()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Sair
+              </button>
+            </div>
+
+            <div class="ai-panel__input">
+              <div class="ai-panel__input-wrapper">
+                <textarea rows="2"
+                          [(ngModel)]="searchQuery"
+                          placeholder="Pergunte algo como “Preciso de uma trilha para novos líderes de produto”"
+                          class="ai-panel__textarea"></textarea>
+                <div class="ai-panel__input-actions">
+                  <button class="ai-panel__ghost-btn" title="Inserir arquivos">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L18 9.828"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 5l3 3m-6-6h6v6"/>
+                    </svg>
+                  </button>
+                  <button class="ai-panel__ghost-btn" title="Sugerir tópicos">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/>
+                    </svg>
+                  </button>
+                  <button class="ai-panel__send" title="Enviar">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M2.01 21l20.99-9L2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="ai-panel__chips">
+                <span class="ai-panel__chip" *ngFor="let chip of aiChips">{{ chip }}</span>
+              </div>
+            </div>
+
+            <div class="ai-panel__quick-prompts">
+              <p class="ai-panel__section-label">Sugestões rápidas</p>
+              <div class="ai-panel__prompt-grid">
+                <button *ngFor="let prompt of quickPrompts" (click)="usePrompt(prompt)" class="ai-panel__prompt-card">
+                  <span>{{ prompt }}</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div *ngIf="showMobileMenu" class="lg:hidden pb-5 border-t border-gray-800 mt-4 pt-4 space-y-4">
           <div class="flex flex-col space-y-3">
             <a *ngFor="let link of navLinks"
                [routerLink]="link.route"
-               [fragment]="link.fragment || undefined"
                (click)="setActiveNav(link.id)"
                class="text-sm py-2 text-white hover:text-gray-300 transition-colors">
               {{ link.label }}
             </a>
           </div>
-          <div class="flex items-center gap-4 pt-4">
-            <a routerLink="/lista-desejos" class="flex items-center gap-2 text-sm text-white hover:text-gray-300 transition-colors">
-              <span>Lista de desejos</span>
-              <span *ngIf="wishlistCount > 0" class="bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ wishlistCount }}</span>
-            </a>
-            <a routerLink="/carrinho" class="flex items-center gap-2 text-sm text-white hover:text-gray-300 transition-colors">
-              <span>Carrinho</span>
-              <span *ngIf="cartCount > 0" class="bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cartCount }}</span>
-            </a>
+          <div class="grid grid-cols-1 gap-3">
+            <button (click)="toggleSearch()" class="flex flex-col items-center gap-1 text-xs text-white/80 hover:text-white transition-colors">
+              <span class="flex items-center justify-center w-9 h-9 rounded-full border border-white/40">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </span>
+              Buscar
+            </button>
+          </div>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-800 text-sm text-white/80">
+            <a routerLink="/perfil" class="hover:text-white">Perfil</a>
+            <a routerLink="/lista-desejos" class="hover:text-white">Lista de desejos</a>
+            <a routerLink="/carrinho" class="hover:text-white">Carrinho</a>
           </div>
         </div>
       </nav>
     </header>
   `,
-  styles: []
+  styles: [`
+    .ai-panel {
+      background: #101010;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 1.25rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+    }
+    .ai-panel__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .ai-panel__identity {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .ai-panel__avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #E50914, #8A0B12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    .ai-panel__avatar svg {
+      width: 22px;
+      height: 22px;
+    }
+    .ai-panel__title-highlight {
+      color: #E50914;
+    }
+    .ai-panel__title {
+      margin: 0;
+      font-weight: 600;
+    }
+    .ai-panel__status {
+      margin: 0;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .ai-panel__close {
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: #fff;
+    }
+    .ai-panel__input-wrapper {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.02);
+      padding: 1rem 1.25rem 0.5rem;
+    }
+    .ai-panel__textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #fff;
+      resize: none;
+      font-size: 1rem;
+      outline: none;
+    }
+    .ai-panel__input-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.4rem;
+    }
+    .ai-panel__ghost-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.8);
+    }
+    .ai-panel__send {
+      width: 40px;
+      height: 36px;
+      border-radius: 10px;
+      background: #E50914;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-panel__chips {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      padding-top: 0.8rem;
+    }
+    .ai-panel__chip {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      font-size: 0.8rem;
+    }
+    .ai-panel__quick-prompts {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .ai-panel__prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+      gap: 0.6rem;
+    }
+    .ai-panel__prompt-card {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.6rem;
+      color: #fff;
+      background: rgba(255,255,255,0.02);
+    }
+    @media (max-width: 768px) {
+      .ai-panel {
+        padding: 1rem;
+      }
+      .ai-panel__prompt-grid {
+        grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+      }
+    }
+  `]
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   isScrolled = false;
+  showSearch = false;
+  showSearchDropdown = false;
+  showProfileMenu = false;
   showMobileMenu = false;
+  searchQuery = '';
   cartCount = 0;
   wishlistCount = 0;
-  activeNav = 'planos';
+  activeNav = 'home';
   private subscriptions = new Subscription();
 
-  navLinks: NavLink[] = [
+  navLinks = [
+    { id: 'masterclasses', label: 'Categorias', route: '/masterclasses' },
     { id: 'planos', label: 'Planos', route: '/planos' },
-    { id: 'empresas', label: 'Empresas', route: '/empresas' }
+    { id: 'empresas', label: 'Empresas', route: '/empresas' },
+    { id: 'presentes', label: 'Presentes', route: '/presentes' },
+    { id: 'mentores', label: 'Área do Mentor', route: '/mentor/dashboard' }
+  ];
+
+  aiChips = ['Mentorias', 'Planos e trilhas', 'Empresas'];
+  quickPrompts = [
+    'Quais mentorias recomendadas para líderes de produto?',
+    'Monte um plano para treinar meu time comercial',
+    'Sugira trilhas para RH estratégico',
+    'Quais mentores têm foco em dados?'
   ];
 
   constructor(private cartService: CartService) {}
@@ -120,9 +398,43 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  popularSearches = [
+    'Liderança',
+    'Empreendedorismo',
+    'Marketing Digital',
+    'Tecnologia',
+    'Design'
+  ];
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 50;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.profile-menu')) {
+      this.showProfileMenu = false;
+    }
+    if (!target.closest('.header-search')) {
+      this.showSearchDropdown = false;
+    }
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+    if (!this.showSearch) {
+      this.showSearchDropdown = false;
+    }
+  }
+
+  usePrompt(prompt: string) {
+    this.searchQuery = prompt;
+  }
+
+  toggleProfileMenu() {
+    this.showProfileMenu = !this.showProfileMenu;
   }
 
   toggleMobileMenu() {
@@ -131,6 +443,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   setActiveNav(navId: string) {
     this.activeNav = navId;
+  }
+
+  onSearchBlur() {
+    // Delay to allow click events on dropdown items
+    setTimeout(() => {
+      this.showSearchDropdown = false;
+    }, 200);
+  }
+
+  selectSearch(search: string) {
+    this.searchQuery = search;
+    this.showSearchDropdown = false;
+    // Navigate to search results or perform search
   }
 }
 
