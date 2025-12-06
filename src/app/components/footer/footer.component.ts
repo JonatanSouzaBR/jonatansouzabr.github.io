@@ -10,9 +10,10 @@ import { RouterLink } from '@angular/router';
       <div class="container mx-auto px-4 md:px-6 py-12">
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-8">
           <div class="col-span-2">
-            <div class="mb-4">
-              <a routerLink="/" class="mentormatch-logo-chanel cursor-pointer">
-                <span class="logo-text-chanel">MentorMatch</span>
+            <div class="mb-4 flex items-center">
+              <a routerLink="/" class="flex items-center space-x-2 text-white font-mc-bold text-[1.2rem]">
+                <span>MENTORMATCH</span>
+                <span class="text-[#E50914]">PLAY</span>
               </a>
             </div>
             <p class="text-mc-text-tertiary body-font mb-4 font-mc text-mc-sm">

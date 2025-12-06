@@ -38,16 +38,8 @@ interface NavigationLink {
           <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-[65%] sm:max-w-none">
             <a routerLink="/" class="cursor-pointer flex items-center space-x-2">
               <span class="text-white font-bold text-[1.2rem] sm:text-[1.4rem] tracking-tight flex items-center gap-1.5">
-                MENTORMATCH
-                <span class="flex items-center gap-2">
-                  <span class="text-[#E50914] text-[0.85rem] sm:text-[0.95rem]">PLAY</span>
-                  <span class="flex items-center justify-center w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] rounded-full border border-[#E50914] text-[#E50914]">
-                    <svg class="w-2 h-2 sm:w-2.5 sm:h-2.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                    <span class="sr-only">Play</span>
-                  </span>
-                </span>
+                <span>MENTORMATCH</span>
+                <span class="text-[#E50914]">PLAY</span>
               </span>
             </a>
 

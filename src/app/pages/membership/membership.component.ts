@@ -19,7 +19,7 @@ interface MembershipPlan {
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-mc-black">
+    <div class="min-h-screen bg-mc-black pt-16 md:pt-20">
       <!-- Progress Steps Bar -->
       <section class="bg-mc-black border-b border-mc-gray-800">
         <div class="container mx-auto px-6 py-6">
