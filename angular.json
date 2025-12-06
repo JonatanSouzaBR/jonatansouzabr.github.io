@@ -14,7 +14,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "docs",
-            "baseHref": "/mentormatch.github.io/",
+            "baseHref": "/mentormatch/",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
