@@ -35,14 +35,14 @@ interface NavigationLink {
             [ngClass]="headerBackgroundClass">
       <nav class="w-full px-4 md:px-8 lg:px-12">
         <div class="flex items-center justify-between gap-3 h-16 md:h-20">
-          <div class="flex items-center gap-4 flex-1 min-w-0">
-            <a routerLink="/" class="cursor-pointer flex items-center space-x-3">
-              <span class="text-white font-bold text-2xl sm:text-[26px] md:text-2xl tracking-tight flex items-center gap-2">
+          <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+            <a routerLink="/" class="cursor-pointer flex items-center space-x-2.5">
+              <span class="text-white font-bold text-[1.35rem] sm:text-[1.5rem] tracking-tight flex items-center gap-1.5">
                 MENTORMATCH
                 <span class="flex items-center gap-2">
-                  <span class="text-[#E50914] text-[1.2rem] sm:text-[1.3rem]">PLAY</span>
-                  <span class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#E50914] text-[#E50914]">
-                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <span class="text-[#E50914] text-[0.95rem] sm:text-[1.05rem]">PLAY</span>
+                  <span class="flex items-center justify-center w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full border border-[#E50914] text-[#E50914]">
+                    <svg class="w-2.5 h-2.5 sm:w-2.75 sm:h-2.75" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                     <span class="sr-only">Play</span>
@@ -62,7 +62,7 @@ interface NavigationLink {
             </div>
           </div>
 
-          <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
+          <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
             <button (click)="toggleSearch()" aria-label="Buscar" class="md:hidden p-2 rounded-full border border-white/15 text-white hover:border-white/40 transition-all">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -76,16 +76,16 @@ interface NavigationLink {
               <span>Buscar</span>
             </button>
 
-            <div class="flex items-center gap-2 text-white">
+            <div class="flex items-center gap-1.5 text-white">
               <a routerLink="/lista-desejos" class="relative p-2 rounded-full border border-white/10 hover:border-white/40 transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                 </svg>
                 <span *ngIf="wishlistCount > 0" class="absolute -top-1 -right-1 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ wishlistCount }}</span>
               </a>
 
               <a routerLink="/carrinho" class="relative p-2 rounded-full border border-white/10 hover:border-white/40 transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
                 <span *ngIf="cartCount > 0" class="absolute -top-1 -right-1 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cartCount }}</span>
