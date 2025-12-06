@@ -32,15 +32,15 @@ interface SectionConfig {
         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
 
-        <div class="relative z-10 h-full flex items-end pt-8 md:pt-12 pb-14 md:pb-20 px-4 sm:px-8 lg:px-16">
-          <div class="max-w-3xl">
+        <div class="relative z-10 h-full flex items-center justify-start text-left pt-[7.5rem] md:pt-[9.5rem] pb-[7.5rem] md:pb-[9.5rem] px-4 sm:px-8 lg:px-16">
+          <div class="max-w-3xl flex flex-col items-start">
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
               {{ activeHero.title }}
             </h1>
             <p class="text-lg md:text-xl text-white/90 mb-6 max-w-2xl">
               {{ activeHero.tagline }}
             </p>
-            <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
+            <div class="flex items-center justify-start gap-3 sm:gap-4 flex-wrap">
               <button class="flex items-center gap-2 sm:gap-3 bg-white text-black px-5 sm:px-6 py-2.5 rounded font-semibold hover:bg-gray-200 transition-colors"
                       (click)="openHeroSlide(activeHero.id)">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@ interface SectionConfig {
                 <span>Mais informações</span>
           </button>
                 </div>
-            <div class="flex flex-wrap items-center gap-2 mt-6 text-sm text-white/80">
+            <div class="flex flex-wrap items-center justify-start gap-2 mt-6 text-sm text-white/80">
               <span *ngFor="let genre of activeHero.genres; let last = last">
                 {{ genre }}<span *ngIf="!last"> • </span>
               </span>

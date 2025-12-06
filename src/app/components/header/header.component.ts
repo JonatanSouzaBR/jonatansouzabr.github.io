@@ -19,25 +19,30 @@ interface AiResponseEntry {
   timestamp: Date;
 }
 
+interface NavigationLink {
+  id: string;
+  label: string;
+  route: string;
+  description?: string;
+}
+
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [RouterLink, CommonModule, FormsModule],
   template: `
-    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" 
-            [ngClass]="{'bg-black': isScrolled, 'bg-gradient-to-b from-black via-black/80 to-transparent': !isScrolled}">
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5" 
+            [ngClass]="headerBackgroundClass">
       <nav class="w-full px-4 md:px-8 lg:px-12">
-        <div class="flex items-center justify-between h-16 md:h-20">
-          <!-- Left Section: Logo + Navigation -->
-          <div class="flex items-center space-x-4 md:space-x-8 flex-shrink-0">
-            <!-- Logo MentorMatch Play -->
+        <div class="flex items-center justify-between gap-3 h-16 md:h-20">
+          <div class="flex items-center gap-4 flex-1 min-w-0">
             <a routerLink="/" class="cursor-pointer flex items-center space-x-3">
-              <span class="text-white font-bold text-xl md:text-2xl tracking-tight flex items-center gap-2">
+              <span class="text-white font-bold text-2xl sm:text-[26px] md:text-2xl tracking-tight flex items-center gap-2">
                 MENTORMATCH
                 <span class="flex items-center gap-2">
-                  <span class="text-[#E50914]">PLAY</span>
-                  <span class="flex items-center justify-center w-7 h-7 rounded-full border border-[#E50914] text-[#E50914]">
-                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <span class="text-[#E50914] text-[1.2rem] sm:text-[1.3rem]">PLAY</span>
+                  <span class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#E50914] text-[#E50914]">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                     <span class="sr-only">Play</span>
@@ -45,61 +50,58 @@ interface AiResponseEntry {
                 </span>
               </span>
             </a>
-            
-            <!-- Navigation Links - Estilo Netflix -->
-            <div class="hidden lg:flex items-center space-x-4">
+
+            <div class="hidden lg:flex items-center gap-1 px-2 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-lg">
               <a *ngFor="let link of navLinks"
                  [routerLink]="link.route"
                  (click)="setActiveNav(link.id)"
-                 class="text-sm font-medium transition-colors"
-                 [ngClass]="{
-                   'text-white font-semibold': activeNav === link.id,
-                   'text-gray-300 hover:text-white': activeNav !== link.id
-                 }">
+                 class="px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200"
+                 [ngClass]="activeNav === link.id ? 'bg-white text-black shadow-lg' : 'text-white/70 hover:text-white'">
                 {{ link.label }}
               </a>
             </div>
           </div>
 
-          <!-- Right Section: Search + Icons + Profile -->
-          <div class="flex items-center space-x-3 md:space-x-5 flex-shrink-0">
-            <div class="hidden md:flex items-center">
-              <!-- Search Icon -->
-              <button (click)="toggleSearch()" class="text-white hover:text-gray-300 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
+            <button (click)="toggleSearch()" aria-label="Buscar" class="md:hidden p-2 rounded-full border border-white/15 text-white hover:border-white/40 transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+
+            <button (click)="toggleSearch()" class="hidden md:inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border border-white/15 text-white/80 hover:text-white hover:border-white/40 transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <span>Buscar</span>
+            </button>
+
+            <div class="flex items-center gap-2 text-white">
+              <a routerLink="/lista-desejos" class="relative p-2 rounded-full border border-white/10 hover:border-white/40 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                 </svg>
-              </button>
+                <span *ngIf="wishlistCount > 0" class="absolute -top-1 -right-1 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ wishlistCount }}</span>
+              </a>
+
+              <a routerLink="/carrinho" class="relative p-2 rounded-full border border-white/10 hover:border-white/40 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <span *ngIf="cartCount > 0" class="absolute -top-1 -right-1 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cartCount }}</span>
+              </a>
             </div>
 
-            <!-- Wishlist Icon -->
-            <a routerLink="/lista-desejos" class="relative text-white hover:text-gray-300 transition-colors">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-              </svg>
-              <span *ngIf="wishlistCount > 0" class="absolute -top-2 -right-2 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ wishlistCount }}</span>
-            </a>
-
-            <!-- Cart Icon -->
-            <a routerLink="/carrinho" class="relative text-white hover:text-gray-300 transition-colors">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-              </svg>
-              <span *ngIf="cartCount > 0" class="absolute -top-2 -right-2 bg-[#E50914] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ cartCount }}</span>
-            </a>
-
-            <!-- Profile Icon -->
             <div class="relative profile-menu hidden sm:block">
               <button (click)="toggleProfileMenu()" class="flex items-center space-x-2 text-white hover:text-gray-300 transition-colors">
-                <div class="w-8 h-8 bg-[#E50914] rounded flex items-center justify-center">
+                <div class="w-9 h-9 bg-[#E50914] rounded-full flex items-center justify-center shadow-lg">
                   <span class="text-white text-sm font-bold">J</span>
                 </div>
                 <svg class="w-4 h-4 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              
-              <!-- Profile Dropdown -->
+
               <div *ngIf="showProfileMenu" 
                    class="absolute top-full right-0 mt-2 w-48 bg-black border border-gray-800 rounded shadow-xl py-2 z-50"
                    (click)="$event.stopPropagation()">
@@ -111,8 +113,7 @@ interface AiResponseEntry {
               </div>
             </div>
 
-            <!-- Mobile Menu -->
-            <button (click)="toggleMobileMenu()" class="lg:hidden text-white">
+            <button (click)="toggleMobileMenu()" class="mobile-menu-trigger lg:hidden p-2 rounded-full border border-white/15 text-white hover:border-white/40 transition-all" aria-label="Abrir menu">
               <svg *ngIf="!showMobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
               </svg>
@@ -123,13 +124,12 @@ interface AiResponseEntry {
           </div>
         </div>
 
-        <!-- Search Bar (Expanded) -->
-        <div *ngIf="showSearch" class="pb-4">
+        <div *ngIf="showSearch" class="pb-4 mt-3">
           <div class="ai-panel">
             <div class="ai-panel__header">
               <div class="ai-panel__identity">
                 <div>
-                  <p class="ai-panel__title">Mentor<span class="ai-panel__title-highlight">AI</span> Assistente</p>
+                  <p class="ai-panel__title">Mentor<span class="ai-panel__title-highlight">AI</span></p>
                   <p class="ai-panel__status">Disponível para montar mentorias sob medida</p>
                 </div>
               </div>
@@ -190,21 +190,6 @@ interface AiResponseEntry {
                   </button>
                 </div>
               </div>
-              <div class="ai-panel__chips">
-                <span class="ai-panel__chip" *ngFor="let chip of aiChips">{{ chip }}</span>
-              </div>
-            </div>
-
-            <div class="ai-panel__quick-prompts">
-              <p class="ai-panel__section-label">Sugestões rápidas</p>
-              <div class="ai-panel__prompt-grid">
-                <button *ngFor="let prompt of quickPrompts" (click)="usePrompt(prompt)" class="ai-panel__prompt-card">
-                  <span>{{ prompt }}</span>
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                  </svg>
-                </button>
-              </div>
             </div>
 
             <p *ngIf="aiStatusMessage" class="ai-panel__status-text">{{ aiStatusMessage }}</p>
@@ -221,32 +206,49 @@ interface AiResponseEntry {
           </div>
         </div>
 
-        <!-- Mobile Menu -->
-        <div *ngIf="showMobileMenu" class="lg:hidden pb-5 border-t border-gray-800 mt-4 pt-4 space-y-4">
-          <div class="flex flex-col space-y-3">
-            <a *ngFor="let link of navLinks"
-               [routerLink]="link.route"
-               (click)="setActiveNav(link.id)"
-               class="text-sm py-2 text-white hover:text-gray-300 transition-colors">
-              {{ link.label }}
-            </a>
+        <ng-container *ngIf="showMobileMenu">
+          <div class="lg:hidden mt-4 mobile-menu-panel">
+            <div class="rounded-2xl bg-black/95 border border-white/10 shadow-2xl p-4 space-y-5 overflow-y-auto max-h-[calc(100vh-7rem)] pr-2">
+              <div class="grid gap-3">
+                <a *ngFor="let link of navLinks"
+                   [routerLink]="link.route"
+                   (click)="setActiveNav(link.id)"
+                   class="block px-5 py-4 rounded-2xl border border-white/10 bg-white/5 text-white transition-colors hover:bg-white/10">
+                  <p class="font-semibold">{{ link.label }}</p>
+                  <span *ngIf="link.description" class="text-xs text-white/60">{{ link.description }}</span>
+                </a>
+              </div>
+
+              <div class="space-y-3 pt-2">
+                <a routerLink="/perfil" class="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-white/10 to-white/5 border border-white/15 text-white transition-all hover:from-white/15 hover:to-white/10">
+                  <span class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 20a6 6 0 0112 0" />
+                    </svg>
+                  </span>
+                  <div class="flex-1">
+                    <p class="font-semibold">Perfil</p>
+                    <span class="text-xs text-white/70">Gerencie sua conta e preferências</span>
+                  </div>
+                </a>
+
+                <a routerLink="/configuracoes" class="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-white/10 to-white/5 border border-white/15 text-white transition-all hover:from-white/15 hover:to-white/10">
+                  <span class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317a1 1 0 011.35 0l.867.863a1 1 0 00.95.249l1.182-.33a1 1 0 011.213.707l.332 1.184a1 1 0 00.248.949l.864.867a1 1 0 010 1.35l-.864.867a1 1 0 00-.249.949l.33 1.183a1 1 0 01-.707 1.213l-1.183.332a1 1 0 00-.948.248l-.868.864a1 1 0 01-1.35 0l-.867-.864a1 1 0 00-.949-.248l-1.184.33a1 1 0 01-1.212-.707l-.332-1.184a1 1 0 00-.248-.949l-.864-.867a1 1 0 010-1.35l.864-.867a1 1 0 00.248-.949l-.33-1.183a1 1 0 01.707-1.213l1.184-.332a1 1 0 00.948-.248l.867-.863z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </span>
+                  <div class="flex-1">
+                    <p class="font-semibold">Configurações</p>
+                    <span class="text-xs text-white/70">Preferências e segurança</span>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="grid grid-cols-1 gap-3">
-            <button (click)="toggleSearch()" class="flex flex-col items-center gap-1 text-xs text-white/80 hover:text-white transition-colors">
-              <span class="flex items-center justify-center w-9 h-9 rounded-full border border-white/40">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-              </span>
-              Buscar
-            </button>
-          </div>
-          <div class="flex items-center justify-between pt-3 border-t border-gray-800 text-sm text-white/80">
-            <a routerLink="/perfil" class="hover:text-white">Perfil</a>
-            <a routerLink="/lista-desejos" class="hover:text-white">Lista de desejos</a>
-            <a routerLink="/carrinho" class="hover:text-white">Carrinho</a>
-          </div>
-        </div>
+        </ng-container>
       </nav>
     </header>
   `,
@@ -474,6 +476,7 @@ interface AiResponseEntry {
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   isScrolled = false;
+  isMobileView = false;
   showSearch = false;
   showSearchDropdown = false;
   showProfileMenu = false;
@@ -491,12 +494,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private speechRecognition?: any;
   private transcriptionBaseText = '';
 
-  navLinks = [
-    { id: 'masterclasses', label: 'Masterclasses', route: '/masterclasses' },
-    { id: 'planos', label: 'Planos', route: '/planos' },
-    { id: 'empresas', label: 'Empresas', route: '/empresas' },
-    { id: 'presentes', label: 'Presentes', route: '/presentes' },
-    { id: 'mentores', label: 'Área do Mentor', route: '/mentor/dashboard' }
+  navLinks: NavigationLink[] = [
+    { id: 'masterclasses', label: 'Masterclasses', route: '/masterclasses', description: 'Catálogo completo' },
+    { id: 'planos', label: 'Planos', route: '/planos', description: 'Assinaturas e combos' },
+    { id: 'empresas', label: 'Empresas', route: '/empresas', description: 'Programas corporativos' },
+    { id: 'presentes', label: 'Presentes', route: '/presentes', description: 'Cartões e kits' },
+    { id: 'mentores', label: 'Área do Mentor', route: '/mentor/dashboard', description: 'Dashboard exclusivo' }
   ];
 
   aiChips = ['Mentorias', 'Planos e trilhas', 'Empresas'];
@@ -510,6 +513,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private cartService: CartService) {}
 
   ngOnInit() {
+    this.handleViewportChange();
     this.subscriptions.add(
       this.cartService.cart$.subscribe(items => {
         this.cartCount = items.length;
@@ -537,9 +541,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     'Design'
   ];
 
+  get headerBackgroundClass() {
+    if (this.showMobileMenu || this.isMobileView) {
+      return 'bg-black/95 backdrop-blur-xl shadow-2xl';
+    }
+    if (this.isScrolled) {
+      return 'bg-black/90 backdrop-blur-lg shadow-xl';
+    }
+    return 'bg-gradient-to-b from-black/90 via-black/50 to-transparent';
+  }
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 50;
+  }
+
+  @HostListener('window:resize', [])
+  onWindowResize() {
+    this.handleViewportChange();
   }
 
   @HostListener('document:click', ['$event'])
@@ -551,11 +570,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!target.closest('.header-search')) {
       this.showSearchDropdown = false;
     }
+    if (this.showMobileMenu) {
+      const clickedPanel = this.eventPathHasClass(event, 'mobile-menu-panel');
+      const clickedTrigger = this.eventPathHasClass(event, 'mobile-menu-trigger');
+      if (!clickedPanel && !clickedTrigger) {
+        this.closeMobileMenu();
+      }
+    }
   }
 
   toggleSearch() {
     this.showSearch = !this.showSearch;
-    if (!this.showSearch) {
+    if (this.showSearch) {
+      this.showMobileMenu = false;
+    } else {
       this.showSearchDropdown = false;
     }
   }
@@ -570,10 +598,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleMobileMenu() {
     this.showMobileMenu = !this.showMobileMenu;
+    if (this.showMobileMenu) {
+      this.showSearch = false;
+      this.showSearchDropdown = false;
+    }
+  }
+
+  closeMobileMenu() {
+    this.showMobileMenu = false;
   }
 
   setActiveNav(navId: string) {
     this.activeNav = navId;
+    if (this.isMobileView) {
+      this.showMobileMenu = false;
+    }
   }
 
   onSearchBlur() {
@@ -646,6 +685,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.resetAiForm();
       this.isSending = false;
     }, 1200);
+  }
+
+  private eventPathHasClass(event: MouseEvent, className: string): boolean {
+    const hasComposedPath = typeof event.composedPath === 'function';
+    if (hasComposedPath) {
+      return event
+        .composedPath()
+        .some(el => el instanceof HTMLElement && el.classList?.contains(className));
+    }
+    const target = event.target as HTMLElement | null;
+    return !!target?.closest(`.${className}`);
   }
 
   private addAttachmentFromFile(file: File) {
@@ -781,6 +831,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const basePrompt = prompt || 'Seus anexos';
     const attachmentInfo = attachments > 0 ? ` Incluí ${attachments} anexo(s) na análise.` : '';
     return `${basePrompt} recebeu uma análise personalizada. ${attachmentInfo} Confira as recomendações destacando mentores, planos e próximos passos sugeridos.`;
+  }
+
+  private handleViewportChange() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const isNowMobile = window.innerWidth < 1024;
+    if (!isNowMobile && this.showMobileMenu) {
+      this.showMobileMenu = false;
+    }
+    this.isMobileView = isNowMobile;
   }
 }
 
