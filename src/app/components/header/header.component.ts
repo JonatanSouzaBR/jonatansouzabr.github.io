@@ -118,51 +118,44 @@ interface NavigationLink {
 
         <div *ngIf="showSearch" class="pb-4 mt-3">
           <div class="ai-panel">
-            <div class="ai-panel__header">
-              <div class="ai-panel__identity">
-                <div>
-                  <p class="ai-panel__title">Mentor<span class="ai-panel__title-highlight">AI</span></p>
-                  <p class="ai-panel__status">Disponível para montar mentorias sob medida</p>
-                </div>
-              </div>
-              <button class="ai-panel__close" (click)="toggleSearch()">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                Sair
-              </button>
+            <!-- Greeting Section -->
+            <div class="ai-panel__greeting">
+              <h2 class="ai-panel__greeting-title">Oi Jonatan</h2>
+              <p class="ai-panel__greeting-subtitle">Por onde começamos?</p>
             </div>
 
+            <!-- Input Section -->
             <div class="ai-panel__input">
               <input type="file" multiple class="hidden" #attachmentInput (change)="handleAttachmentSelection($event)">
               <div class="ai-panel__input-wrapper">
-                <textarea rows="2"
-                          [(ngModel)]="searchQuery"
-                          placeholder="Pergunte algo como “Preciso de uma trilha para novos líderes de produto”"
-                          class="ai-panel__textarea"></textarea>
-                <div class="ai-panel__input-actions">
-                  <button class="ai-panel__ghost-btn" title="Inserir arquivos" type="button" (click)="triggerAttachmentPicker(attachmentInput)">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8v8a5 5 0 11-10 0V7a3 3 0 016 0v8a1 1 0 01-2 0V8"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 19a3 3 0 11-6 0v-7a5 5 0 0110 0"/>
+                <div class="ai-panel__input-left">
+                  <button class="ai-panel__attach-btn" title="Anexar arquivos" type="button" (click)="triggerAttachmentPicker(attachmentInput)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                   </button>
+                </div>
+                <textarea rows="1"
+                          [(ngModel)]="searchQuery"
+                          placeholder="Pergunte algo como 'Preciso de uma trilha para novos líderes de produto'"
+                          class="ai-panel__textarea"
+                          (keydown.enter)="handleEnterKey($event)"></textarea>
+                <div class="ai-panel__input-right">
+                  <select class="ai-panel__thinking-select">
+                    <option>Thinking</option>
+                    <option>Rápido</option>
+                    <option>Balanceado</option>
+                    <option>Detalhado</option>
+                  </select>
                   <button 
-                    class="ai-panel__ghost-btn"
-                    [ngClass]="{'ai-panel__ghost-btn--recording': isTranscribing}"
-                    title="Transcrever fala"
+                    class="ai-panel__mic-btn"
+                    [ngClass]="{'ai-panel__mic-btn--recording': isTranscribing}"
+                    title="Gravar áudio"
                     type="button"
                     (click)="toggleTranscription()"
                     [attr.aria-pressed]="isTranscribing">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3a3 3 0 00-3 3v5a3 3 0 006 0V6a3 3 0 00-3-3z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-14 0"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v4m-3 0h6"/>
-                    </svg>
-                  </button>
-                  <button class="ai-panel__send" title="Enviar" type="button" (click)="submitAiRequest()" [disabled]="isSending">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M2.01 21l20.99-9L2.01 3 2 10l15 2-15 2z"/>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
                     </svg>
                   </button>
                 </div>
@@ -182,6 +175,40 @@ interface NavigationLink {
                   </button>
                 </div>
               </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="ai-panel__actions">
+              <button class="ai-panel__action-btn" (click)="handleAction('image')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Criar imagem
+              </button>
+              <button class="ai-panel__action-btn" (click)="handleAction('video')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+                Criar vídeo
+              </button>
+              <button class="ai-panel__action-btn" (click)="handleAction('write')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Escrever qualquer coisa
+              </button>
+              <button class="ai-panel__action-btn" (click)="handleAction('learn')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Me ajude a aprender
+              </button>
+              <button class="ai-panel__action-btn" (click)="handleAction('boost')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Impulsione meu dia
+              </button>
             </div>
 
             <p *ngIf="aiStatusMessage" class="ai-panel__status-text">{{ aiStatusMessage }}</p>
@@ -308,7 +335,24 @@ interface NavigationLink {
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(255,255,255,0.02);
-      padding: 1rem 1.25rem 0.5rem;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ai-panel__greeting {
+      margin-bottom: 1.5rem;
+    }
+    .ai-panel__greeting-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.9);
+      margin: 0 0 0.25rem;
+    }
+    .ai-panel__greeting-subtitle {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      margin: 0;
     }
     .ai-panel__textarea {
       width: 100%;
@@ -316,8 +360,110 @@ interface NavigationLink {
       border: none;
       color: #fff;
       resize: none;
-      font-size: 1rem;
+      font-size: 0.875rem;
       outline: none;
+      line-height: 1.5;
+      padding: 0.5rem 0;
+    }
+    .ai-panel__textarea::placeholder {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+    }
+    .ai-panel__input-left {
+      display: flex;
+      align-items: center;
+      padding-right: 0.75rem;
+    }
+    .ai-panel__attach-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.8);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ai-panel__attach-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .ai-panel__input-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-left: 0.75rem;
+    }
+    .ai-panel__thinking-select {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 0.4rem 0.6rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      cursor: pointer;
+      outline: none;
+    }
+    .ai-panel__thinking-select:hover {
+      border-color: rgba(255,255,255,0.3);
+    }
+    .ai-panel__mic-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.8);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ai-panel__mic-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .ai-panel__mic-btn--recording {
+      border-color: #E50914;
+      color: #E50914;
+      background: rgba(229,9,20,0.1);
+      box-shadow: 0 0 0 4px rgba(229,9,20,0.15);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .ai-panel__actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .ai-panel__action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.875rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.9);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ai-panel__action-btn:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.25);
+      transform: translateY(-1px);
     }
     .ai-panel__input-actions {
       display: flex;
@@ -650,6 +796,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return;
     }
     this.startTranscription();
+  }
+
+  handleEnterKey(event: Event) {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
+      keyboardEvent.preventDefault();
+      this.submitAiRequest();
+    }
+  }
+
+  handleAction(action: string) {
+    const actionPrompts: { [key: string]: string } = {
+      'image': 'Crie uma imagem de',
+      'video': 'Crie um vídeo sobre',
+      'write': 'Escreva sobre',
+      'learn': 'Me ensine sobre',
+      'boost': 'Me ajude a melhorar'
+    };
+    
+    const prompt = actionPrompts[action] || 'Explique sobre';
+    this.searchQuery = prompt;
+    // Focus on textarea
+    setTimeout(() => {
+      const textarea = document.querySelector('.ai-panel__textarea') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(prompt.length, prompt.length);
+      }
+    }, 100);
   }
 
   submitAiRequest() {
