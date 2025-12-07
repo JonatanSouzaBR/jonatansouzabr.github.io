@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { Subscription } from 'rxjs';
+import { ExplorerMenuComponent } from '../explorer-menu/explorer-menu.component';
 
 interface AiAttachment {
   id: string;
@@ -29,45 +30,29 @@ interface NavigationLink {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, CommonModule, FormsModule],
+  imports: [RouterLink, CommonModule, FormsModule, ExplorerMenuComponent],
   template: `
     <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5" 
             [ngClass]="headerBackgroundClass">
       <nav class="w-full px-4 md:px-8 lg:px-12">
-        <div class="flex items-center justify-between gap-3 h-16 md:h-20">
-          <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-[65%] sm:max-w-none">
+        <div class="flex items-center gap-3 h-16 md:h-20">
+          <!-- Logo e Menu Explorer -->
+          <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0">
             <a routerLink="/" class="cursor-pointer flex items-center space-x-2">
               <span class="text-white font-bold text-[1.2rem] sm:text-[1.4rem] tracking-tight flex items-center gap-1.5">
                 <span>MENTORMATCH</span>
                 <span class="text-[#E50914]">PLAY</span>
               </span>
             </a>
-
-            <div class="hidden lg:flex items-center gap-1 px-2 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-lg">
-              <a *ngFor="let link of navLinks"
-                 [routerLink]="link.route"
-                 (click)="setActiveNav(link.id)"
-                 class="px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200"
-                 [ngClass]="activeNav === link.id ? 'bg-white text-black shadow-lg' : 'text-white/70 hover:text-white'">
-                {{ link.label }}
-              </a>
+            <div class="hidden lg:block ml-4">
+              <app-explorer-menu></app-explorer-menu>
             </div>
           </div>
 
+          <!-- Espaço central -->
+          <div class="flex-1"></div>
+
           <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
-            <button (click)="toggleSearch()" aria-label="Buscar" class="md:hidden p-1.5 rounded-full border border-white/15 text-white hover:border-white/40 transition-all">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </button>
-
-            <button (click)="toggleSearch()" class="hidden md:inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border border-white/15 text-white/80 hover:text-white hover:border-white/40 transition-all">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-              <span>Buscar</span>
-            </button>
-
             <div class="flex items-center gap-1 text-white">
               <a routerLink="/lista-desejos" class="relative p-1.5 rounded-full border border-white/10 hover:border-white/40 transition-all">
                 <svg class="w-[18px] h-[18px] md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,115 +98,6 @@ interface NavigationLink {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
-          </div>
-        </div>
-
-        <div *ngIf="showSearch" class="pb-4 mt-3">
-          <div class="ai-panel">
-            <!-- Greeting Section -->
-            <div class="ai-panel__greeting">
-              <h2 class="ai-panel__greeting-title">Oi Jonatan</h2>
-              <p class="ai-panel__greeting-subtitle">Por onde começamos?</p>
-            </div>
-
-            <!-- Input Section -->
-            <div class="ai-panel__input">
-              <input type="file" multiple class="hidden" #attachmentInput (change)="handleAttachmentSelection($event)">
-              <div class="ai-panel__input-wrapper">
-                <div class="ai-panel__input-left">
-                  <button class="ai-panel__attach-btn" title="Anexar arquivos" type="button" (click)="triggerAttachmentPicker(attachmentInput)">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                  </button>
-                </div>
-                <textarea rows="1"
-                          [(ngModel)]="searchQuery"
-                          placeholder="Pergunte algo como 'Preciso de uma trilha para novos líderes de produto'"
-                          class="ai-panel__textarea"
-                          (keydown.enter)="handleEnterKey($event)"></textarea>
-                <div class="ai-panel__input-right">
-                  <select class="ai-panel__thinking-select">
-                    <option>Thinking</option>
-                    <option>Rápido</option>
-                    <option>Balanceado</option>
-                    <option>Detalhado</option>
-                  </select>
-                  <button 
-                    class="ai-panel__mic-btn"
-                    [ngClass]="{'ai-panel__mic-btn--recording': isTranscribing}"
-                    title="Gravar áudio"
-                    type="button"
-                    (click)="toggleTranscription()"
-                    [attr.aria-pressed]="isTranscribing">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div *ngIf="aiAttachments.length" class="ai-panel__attachments">
-                <div *ngFor="let attachment of aiAttachments" class="ai-attachment-card">
-                  <div class="ai-attachment-card__info">
-                    <p class="ai-attachment-card__name">{{ attachment.name }}</p>
-                    <span class="ai-attachment-card__meta">
-                      {{ attachment.sizeLabel }} • Arquivo
-                    </span>
-                  </div>
-                  <button class="ai-attachment-card__remove" (click)="removeAttachment(attachment.id)" type="button" aria-label="Remover anexo">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="ai-panel__actions">
-              <button class="ai-panel__action-btn" (click)="handleAction('image')">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                Criar imagem
-              </button>
-              <button class="ai-panel__action-btn" (click)="handleAction('video')">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                </svg>
-                Criar vídeo
-              </button>
-              <button class="ai-panel__action-btn" (click)="handleAction('write')">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                </svg>
-                Escrever qualquer coisa
-              </button>
-              <button class="ai-panel__action-btn" (click)="handleAction('learn')">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                </svg>
-                Me ajude a aprender
-              </button>
-              <button class="ai-panel__action-btn" (click)="handleAction('boost')">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
-                Impulsione meu dia
-              </button>
-            </div>
-
-            <p *ngIf="aiStatusMessage" class="ai-panel__status-text">{{ aiStatusMessage }}</p>
-
-            <div *ngIf="aiResponses.length" class="ai-panel__responses">
-              <p class="ai-panel__section-label">Últimas respostas</p>
-              <div class="ai-panel__response-card" *ngFor="let response of aiResponses | slice:0:1">
-                <p class="ai-response__question">{{ response.prompt || 'Envio com anexos' }}</p>
-                <p class="ai-response__answer">{{ response.answer }}</p>
-                <span class="ai-response__meta">{{ response.timestamp | date:'HH:mm' }} · {{ response.attachments }} anexos</span>
-              </div>
-            </div>
-
           </div>
         </div>
 
