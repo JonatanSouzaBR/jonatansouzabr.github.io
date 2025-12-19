@@ -38,7 +38,10 @@ export class OpenAiSearchService {
     limit?: number;
   }): Observable<OpenAiSearchResponse> {
     const base = (environment.openAiProxyBaseUrl || '').replace(/\/+$/, '');
-    const url = `${base}/api/openai/search`;
+    // If base is empty (GitHub Pages), use a relative URL so it respects <base href="...">
+    // Example site: https://jonatansouzabr.github.io/mentormatch.github.io/
+    // Relative "api/..." => https://jonatansouzabr.github.io/mentormatch.github.io/api/...
+    const url = base ? `${base}/api/openai/search` : 'api/openai/search';
     return this.http.post<OpenAiSearchResponse>(url, params);
   }
 }
