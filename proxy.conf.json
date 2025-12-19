@@ -1,0 +1,16 @@
+{
+  "/api/openai": {
+    "target": "http://127.0.0.1:8788",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/zoom": {
+    "target": "http://127.0.0.1:8787",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
+
+

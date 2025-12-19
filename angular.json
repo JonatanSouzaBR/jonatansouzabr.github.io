@@ -83,7 +83,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "mentormatch:build:development"
+            "browserTarget": "mentormatch:build:development",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {

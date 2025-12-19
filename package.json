@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "openai:proxy": "PORT=8788 node server/openai-proxy.mjs",
     "build": "ng build",
     "build:github": "ng build --configuration=github-pages",
     "build:prod": "ng build --configuration production --base-href /",

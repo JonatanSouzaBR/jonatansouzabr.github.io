@@ -2,7 +2,9 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HERO_SLIDES, HeroSlide, MASTERCLASS_SUMMARY, MasterclassSummary } from '../../data/masterclasses.data';
+import { HERO_SLIDES, HeroSlide, MASTERCLASS_DETAIL_DATA, MASTERCLASS_SUMMARY, MasterclassSummary } from '../../data/masterclasses.data';
+import { OpenAiSearchService, MentoriaCatalogItem, OpenAiSearchResultItem } from '../../services/openai-search.service';
+import { Subscription, finalize } from 'rxjs';
 
 interface SectionConfig {
   id: string;
@@ -92,6 +94,53 @@ interface SectionConfig {
                       <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                     </svg>
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Search Results -->
+          <div class="w-full mt-6" *ngIf="hasSearchState">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-base md:text-lg font-semibold text-white">Mentorias gravadas para assistir</h3>
+                <p class="text-xs md:text-sm text-white/60" *ngIf="lastSearchQuery">Resultados para: “{{ lastSearchQuery }}”</p>
+              </div>
+              <button
+                *ngIf="searchResults.length > 0"
+                type="button"
+                class="text-xs uppercase tracking-wide text-white/70 hover:text-white transition-colors"
+                (click)="clearSearchResults()">
+                Limpar
+              </button>
+            </div>
+
+            <div *ngIf="isSearching" class="text-white/70 text-sm py-4">
+              Buscando mentorias…
+            </div>
+
+            <div *ngIf="searchError" class="bg-red-950/30 border border-red-800/40 rounded-lg p-4 text-sm text-red-200">
+              {{ searchError }}
+            </div>
+
+            <div *ngIf="!isSearching && !searchError && searchResults.length === 0" class="text-white/60 text-sm py-4">
+              Nenhuma mentoria encontrada. Tente uma pesquisa mais específica.
+            </div>
+
+            <div *ngIf="searchResults.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div
+                *ngFor="let item of searchResults; trackBy: trackById"
+                class="relative netflix-card aspect-[16/9] overflow-hidden cursor-pointer"
+                (click)="openMasterclass(item.id)">
+                <img [src]="item.thumbnail" [alt]="item.title" class="w-full h-full object-cover">
+                <div class="card-overlay"></div>
+                <button class="card-play" aria-label="Assistir">
+                  <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="card-info-base absolute bottom-0 left-0 right-0 p-3 z-10">
+                  <p class="text-xs text-white/70 mb-1">{{ item.maturity }}</p>
+                  <h3 class="text-white font-semibold text-sm leading-tight mb-1">{{ item.title }}</h3>
+                  <p class="text-white/70 text-xs">{{ item.duration }}</p>
                 </div>
               </div>
             </div>
@@ -478,6 +527,11 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   currentHero = 0;
   heroInterval: any;
   searchQuery = '';
+  lastSearchQuery = '';
+  searchResults: MasterclassSummary[] = [];
+  isSearching = false;
+  searchError = '';
+  private searchSub?: Subscription;
   showUploadMenu = false;
   isRecording = false;
   private speechRecognition: any = null;
@@ -490,7 +544,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   private heroWheelTimeout: any;
   private documentClickHandler = (event: MouseEvent) => this.handleDocumentClick(event);
   
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private openAiSearch: OpenAiSearchService
+  ) {
     // Listener para fechar o menu ao clicar fora
     if (typeof document !== 'undefined') {
       document.addEventListener('click', this.documentClickHandler);
@@ -511,6 +568,81 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   allContent: MasterclassSummary[] = MASTERCLASS_SUMMARY;
 
+  get hasSearchState() {
+    return this.isSearching || !!this.searchError || this.searchResults.length > 0 || !!this.lastSearchQuery;
+  }
+
+  clearSearchResults() {
+    this.searchResults = [];
+    this.searchError = '';
+    this.lastSearchQuery = '';
+  }
+
+  private buildCatalog(): MentoriaCatalogItem[] {
+    // Use detail data so the model has enough context to rank well.
+    const values = Object.values(MASTERCLASS_DETAIL_DATA);
+    return values.map(item => ({
+      id: item.id,
+      title: item.title,
+      mentor: item.mentor,
+      tagline: item.tagline,
+      maturity: item.maturity,
+      duration: item.duration,
+      genres: item.genres,
+      tags: item.tags
+    }));
+  }
+
+  private runAiSearch(query: string) {
+    const q = query.trim();
+    if (!q) return;
+
+    this.searchSub?.unsubscribe();
+    this.isSearching = true;
+    this.searchError = '';
+    this.lastSearchQuery = q;
+    this.searchResults = [];
+
+    const catalog = this.buildCatalog();
+
+    this.searchSub = this.openAiSearch
+      .searchMentorias({ query: q, catalog, limit: 8 })
+      .pipe(finalize(() => { this.isSearching = false; }))
+      .subscribe({
+        next: (resp) => {
+          if (!resp?.ok) {
+            this.searchError = resp?.error || 'Erro ao consultar IA.';
+            this.searchResults = [];
+            return;
+          }
+
+          const resultIds: string[] = (resp.results || [])
+            .map((r: OpenAiSearchResultItem) => r?.id)
+            .filter((id: any) => typeof id === 'string' && id.length > 0);
+
+          const idSet = new Set(resultIds);
+          const byId = new Map(this.allContent.map(item => [item.id, item]));
+          const ordered = resultIds
+            .map(id => byId.get(id))
+            .filter((x): x is MasterclassSummary => !!x);
+
+          // If model returned duplicates or unknowns, fill with safe local fallback.
+          if (ordered.length < 3) {
+            const fallback = this.allContent
+              .filter(item => !idSet.has(item.id))
+              .slice(0, 8 - ordered.length);
+            this.searchResults = [...ordered, ...fallback];
+          } else {
+            this.searchResults = ordered;
+          }
+        },
+        error: (err) => {
+          const msg = err?.error?.error || err?.message || 'Erro ao consultar IA.';
+          this.searchError = msg;
+          this.searchResults = [];
+        }
+      });
+  }
 
   openMasterclass(id: string) {
     this.router.navigate(['/masterclasses', id]);
@@ -539,6 +671,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopHeroLoop();
+    this.searchSub?.unsubscribe();
     if (this.heroWheelTimeout) {
       clearTimeout(this.heroWheelTimeout);
       this.heroWheelTimeout = null;
@@ -684,8 +817,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     }
 
     if (this.searchQuery.trim()) {
-      // Send message
-      this.router.navigate(['/masterclasses'], { queryParams: { search: this.searchQuery.trim() } });
+      this.runAiSearch(this.searchQuery);
     } else {
       // Start recording
       this.startRecording();
@@ -789,8 +921,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
       keyboardEvent.preventDefault();
       if (this.searchQuery.trim()) {
-        // Navigate to search or perform search action
-        this.router.navigate(['/masterclasses'], { queryParams: { search: this.searchQuery.trim() } });
+        this.runAiSearch(this.searchQuery);
       }
     }
   }
