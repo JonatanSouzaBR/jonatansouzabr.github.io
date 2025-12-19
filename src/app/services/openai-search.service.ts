@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface MentoriaCatalogItem {
   id: string;
@@ -36,7 +37,9 @@ export class OpenAiSearchService {
     catalog: MentoriaCatalogItem[];
     limit?: number;
   }): Observable<OpenAiSearchResponse> {
-    return this.http.post<OpenAiSearchResponse>('/api/openai/search', params);
+    const base = (environment.openAiProxyBaseUrl || '').replace(/\/+$/, '');
+    const url = `${base}/api/openai/search`;
+    return this.http.post<OpenAiSearchResponse>(url, params);
   }
 }
 
